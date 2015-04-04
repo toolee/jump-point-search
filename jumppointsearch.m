@@ -3,57 +3,13 @@ clc; clear all; close all;
 
 global map; global ROW; global COL; global S; global G; global C; global O;
 
-% validate input map
-S = 7;
-G = 8;
-C = 1;
-O = 0;
+create_map_symbols();
+use_canned_map();
 
+% validate input map
 if( nargin == 0 )
 
-small_map = ...
-      [ S, C, C, C;
-        C, C, O, C;
-        C, O, O, C;
-        C, C, C, G;
-        ];
-small_map2 = ...
-      [ S, C, C;
-        O, O, C;
-        C, G, C;
-        ];
 
-small_map3 = ...
-      [ S, C, C;
-        O, C, C;
-        C, C, G;
-        ];
-
-large_map = ...
-      [ C, C, C, C, C, C, C, C, C, C;
-        C, O, O, C, O, C, C, C, C, C;
-        C, S, O, C, O, C, C, C, C, C;
-        C, O, O, C, O, C, O, C, C, C;
-        C, C, C, C, C, C, O, C, O, C;
-        O, O, O, O, O, O, C, C, O, C;
-        C, C, C, C, C, C, C, C, O, C;
-        C, O, O, C, O, O, O, C, O, C;
-        C, C, C, C, C, C, O, C, C, C;
-        G, C, C, C, C, C, O, C, C, C;
-        ];
-      
-no_path_large_map = ...
-      [ C, C, C, C, O, C, C, C, C, C;
-        C, O, O, C, O, C, C, C, C, C;
-        C, S, O, C, O, C, C, C, C, C;
-        C, O, O, C, O, C, C, C, C, C;
-        C, C, C, C, C, C, C, C, O, C;
-        C, C, C, C, C, C, C, C, O, C;
-        C, C, C, C, C, C, C, C, O, C;
-        O, O, O, O, O, O, O, O, O, O;
-        C, C, C, C, C, C, C, C, C, C;
-        G, C, C, C, C, C, C, C, C, C;
-        ];
 map = small_map;
 %map = large_map;
 %map = small_map2;
@@ -192,10 +148,60 @@ function jump(r,c,dir,s,g)
 
 
 
+function create_map_symbols()
+global S; global G; global C; global O;
+S = 7;
+G = 8;
+C = 1;
+O = 0;
 
+function ret = use_canned_map()
+global S; global G; global C; global O;
+small_map = ...
+      [ S, C, C, C;
+        C, C, O, C;
+        C, O, O, C;
+        C, C, C, G;
+        ];
+small_map2 = ...
+      [ S, C, C;
+        O, O, C;
+        C, G, C;
+        ];
 
+small_map3 = ...
+      [ S, C, C;
+        O, C, C;
+        C, C, G;
+        ];
 
-
+large_map = ...
+      [ C, C, C, C, C, C, C, C, C, C;
+        C, O, O, C, O, C, C, C, C, C;
+        C, S, O, C, O, C, C, C, C, C;
+        C, O, O, C, O, C, O, C, C, C;
+        C, C, C, C, C, C, O, C, O, C;
+        O, O, O, O, O, O, C, C, O, C;
+        C, C, C, C, C, C, C, C, O, C;
+        C, O, O, C, O, O, O, C, O, C;
+        C, C, C, C, C, C, O, C, C, C;
+        G, C, C, C, C, C, O, C, C, C;
+        ];
+      
+no_path_large_map = ...
+      [ C, C, C, C, O, C, C, C, C, C;
+        C, O, O, C, O, C, C, C, C, C;
+        C, S, O, C, O, C, C, C, C, C;
+        C, O, O, C, O, C, C, C, C, C;
+        C, C, C, C, C, C, C, C, O, C;
+        C, C, C, C, C, C, C, C, O, C;
+        C, C, C, C, C, C, C, C, O, C;
+        O, O, O, O, O, O, O, O, O, O;
+        C, C, C, C, C, C, C, C, C, C;
+        G, C, C, C, C, C, C, C, C, C;
+        ];
+ret = small_map;
+ 
 
 
 
