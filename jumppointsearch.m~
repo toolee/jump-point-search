@@ -124,10 +124,7 @@ cur_node_c = start_c;
 % traverse the map
 
 %--------------------------------------------------------------------------
-% function: neighbor_rc
-% param   : r current row
-% param   : c current col
-% return  : r start/end, c start/end
+% return - r start/end, c start/end
 %--------------------------------------------------------------------------
 function [rs,re,cs,ce] = neighbor_rc(r,c)
 global map; global ROW; global COL; global S; global G; global C; global O;
@@ -142,12 +139,9 @@ if( c+1 < COL ) ce = c+1; else ce = COL; end
 %display(sprintf('DEBUG: neighbors(): %d,%d - %d,%d,%d,%d',r,c,rs,re,cs,ce));
 
 %--------------------------------------------------------------------------
-% function: neighbors
-% param   : r current row
-% param   : c current col
-% return  : all neighbor except obstacles
+% return - all neighbor except obstacles
 %--------------------------------------------------------------------------
-function n = neighbors(r,c)
+function N = neighbors(r,c)
 global map; global ROW; global COL; global S; global G; global C; global O;
 
 [rs,re,cs,ce] = neighbor_rc(r,c);
@@ -157,21 +151,19 @@ i = 1;
 for ri = rs:re
   for ci = cs:ce
     if( map(ri,ci) ~= O )
-      n(i).r = ri;
-      n(i).c = ci;
+      N(i).r = ri;
+      N(i).c = ci;
+      %N(i)
       i = i+1;
     end
   end
 end
 
-%--------------------------------------------------------------------------
-% function: prune
-% param   : r current row
-% param   : c current col
-% param   : n all neighbors
-% return  : pruned neightbors
-%--------------------------------------------------------------------------
-function prune(r,c,n)
-global map; global ROW; global COL; global S; global G; global C; global O;
+
+
+
+function prune(r,c,)
+global ROW;
+global COL;
 
 function jump
