@@ -114,7 +114,8 @@ end
 %neighbor_rc(2,2)
 %neighbor_rc(3,3)
 %neighbor_rc(4,4)
-%neighbors(3,3)
+prune(neighbors(3,3));
+
 
 
 % identify successor
@@ -164,12 +165,20 @@ end
 
 %--------------------------------------------------------------------------
 % function: prune
-% param   : r current row
-% param   : c current col
 % param   : n all neighbors
-% return  : pruned neightbors
+% return  : pruned neighbors
 %--------------------------------------------------------------------------
-function prune(r,c,n)
+function prune(n)
 global map; global ROW; global COL; global S; global G; global C; global O;
+
+ii = 1;
+for i = 1:size(n,2)
+  if ( map( n(i).r, n(i).c ) ~= O )
+    nn(ii).r = n(i).r;
+    nn(ii).c = n(i).c;
+    nn(ii)
+    ii = ii+1;
+  end
+end
 
 function jump

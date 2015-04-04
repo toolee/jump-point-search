@@ -114,7 +114,8 @@ end
 %neighbor_rc(2,2)
 %neighbor_rc(3,3)
 %neighbor_rc(4,4)
-%neighbors(3,3)
+prune(neighbors(3,3));
+
 
 
 % identify successor
@@ -124,7 +125,10 @@ cur_node_c = start_c;
 % traverse the map
 
 %--------------------------------------------------------------------------
-% return - r start/end, c start/end
+% function: neighbor_rc
+% param   : r current row
+% param   : c current col
+% return  : r start/end, c start/end
 %--------------------------------------------------------------------------
 function [rs,re,cs,ce] = neighbor_rc(r,c)
 global map; global ROW; global COL; global S; global G; global C; global O;
@@ -139,9 +143,12 @@ if( c+1 < COL ) ce = c+1; else ce = COL; end
 %display(sprintf('DEBUG: neighbors(): %d,%d - %d,%d,%d,%d',r,c,rs,re,cs,ce));
 
 %--------------------------------------------------------------------------
-% return - all neighbor except obstacles
+% function: neighbors
+% param   : r current row
+% param   : c current col
+% return  : all neighbor including obstacles
 %--------------------------------------------------------------------------
-function N = neighbors(r,c)
+function n = neighbors(r,c)
 global map; global ROW; global COL; global S; global G; global C; global O;
 
 [rs,re,cs,ce] = neighbor_rc(r,c);
@@ -150,20 +157,27 @@ i = 1;
 
 for ri = rs:re
   for ci = cs:ce
-    if( map(ri,ci) ~= O )
-      N(i).r = ri;
-      N(i).c = ci;
-      %N(i)
+      n(i).r = ri;
+      n(i).c = ci;
       i = i+1;
-    end
   end
 end
 
-
-
-
-function prune(r,c,)
-global ROW;
-global COL;
+%--------------------------------------------------------------------------
+% function: prune
+% param   : n all neighbors
+% return  : pruned neightbors
+%--------------------------------------------------------------------------
+function prune(n)
+global map; global ROW; global COL; global S; global G; global C; global O;
+nn(size(n)) = zeros(
+ii = 1;
+for i = 1:size(n)
+  if ( map( n(i).r, n(i).c ) ~= O )
+    nn(ii).r = n(i).r;
+    nn(ii).c = n(i).c;
+    ii = ii+1;
+  end
+end
 
 function jump
