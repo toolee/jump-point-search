@@ -145,7 +145,7 @@ if( c+1 < COL ) ce = c+1; else ce = COL; end
 % function: neighbors
 % param   : r current row
 % param   : c current col
-% return  : all neighbor except obstacles
+% return  : all neighbor including obstacles
 %--------------------------------------------------------------------------
 function n = neighbors(r,c)
 global map; global ROW; global COL; global S; global G; global C; global O;
@@ -156,11 +156,9 @@ i = 1;
 
 for ri = rs:re
   for ci = cs:ce
-    if( map(ri,ci) ~= O )
       n(i).r = ri;
       n(i).c = ci;
       i = i+1;
-    end
   end
 end
 
