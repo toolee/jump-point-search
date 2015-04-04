@@ -2,17 +2,12 @@ function jumppointsearch(input_map)
 clc; clear all; close all;
 
 global map; global ROW; global COL; global S; global G; global C; global O;
+global START; global GOAL;
 
 create_map_symbols();
-use_canned_map();
 
-% validate input map
 if( nargin == 0 )
-
-
-map = small_map;
-%map = large_map;
-%map = small_map2;
+  map = use_canned_map();
 elseif ( nargin == 1)
   map = input_map;
 end
@@ -23,47 +18,10 @@ global COL;
 display(sprintf('INFO: Map size = %d x %d',ROW,COL));
 display(sprintf('INFO: 0 - obstacle | 1 - clear path | 7 - start | 8 - goal'));
 
-%------------------------------------
-% 2) Validate map, and capture start, goal position
-% Draw the map if valid
-%------------------------------------
-num_start = 0;
-num_goal = 0;
-for r = 1:ROW
-  for c = 1:COL
-    if( map(r,c) == S )
-      num_start = num_start + 1;
-      start_r = r; start_c = c;
-    end
-    if( map(r,c) == G )
-      num_goal = num_goal + 1;
-      goal_r = r; goal_c = c;
-    end
-  end
-end
-if( num_start > 1 || num_goal > 1 )
-  display('ERROR: Validate map: Too many start or goal');
-  return;
-end
+validate_map();
 
-% draw a map
-axis([1 COL+1 1 ROW+1]);
-grid on;
-hold on;
-set(gca,'XTick',[1:1:COL]);
-set(gca,'YTick',[1:1:ROW]);
-set(gca,'xaxislocation','top','ydir','reverse');
+draw_map();
 
-% plot start, goal, obstacles
-plot(start_c+0.5,start_r+0.5,'ro');
-plot(goal_c+0.5,goal_r+0.5,'go');
-for ri = 1:ROW
-  for ci = 1:COL
-    if(map(ri,ci)==O) % if it is a obstacle draw it
-      plot(ci+0.5,ri+0.5,'kx');
-    end
-  end
-end
 
 % TESTING
 %neighbor_rc(1,1)
@@ -147,7 +105,11 @@ function jump(r,c,dir,s,g)
 
 
 
-
+%--------------------------------------------------------------------------
+% function: create_map_symbols
+% param   :
+% return  : set global constants
+%--------------------------------------------------------------------------
 function create_map_symbols()
 global S; global G; global C; global O;
 S = 7;
@@ -155,6 +117,11 @@ G = 8;
 C = 1;
 O = 0;
 
+%--------------------------------------------------------------------------
+% function: use_canned_map
+% param   :
+% return  : canned map
+%--------------------------------------------------------------------------
 function ret = use_canned_map()
 global S; global G; global C; global O;
 small_map = ...
@@ -203,9 +170,60 @@ no_path_large_map = ...
 ret = small_map;
  
 
+%--------------------------------------------------------------------------
+% function: validate_map
+%   check for existence of start, goal, and number of occurances
+% param   :
+% return  : captures START, GOAL
+%--------------------------------------------------------------------------
+function validate_map()
+global map; global ROW; global COL; global S; global G; global C; global O;
+global START; global GOAL;
+num_start = 0;
+num_goal = 0;
+for r = 1:ROW
+  for c = 1:COL
+    if( map(r,c) == S )
+      num_start = num_start + 1;
+      START.r = r; START.c = c;
+    end
+    if( map(r,c) == G )
+      num_goal = num_goal + 1;
+      GOAL.r = r; GOAL.c = c;
+    end
+  end
+end
+if( num_start > 1 || num_goal > 1 )
+  display('ERROR: Validate map: Too many start or goal');
+  return;
+end
 
+%--------------------------------------------------------------------------
+% function: draw_map
+%   Draws the initial base map with start, goal, and obstacles
+% param   :
+% return  :
+%--------------------------------------------------------------------------
+function draw_map()
+global map; global ROW; global COL; global S; global G; global C; global O;
+global START; global GOAL;
+axis([1 COL+1 1 ROW+1]);
+grid on;
+hold on;
+set(gca,'XTick',[1:1:COL]);
+set(gca,'YTick',[1:1:ROW]);
+set(gca,'xaxislocation','top','ydir','reverse');
 
-
+% plot start, goal, obstacles
+plot(START.c+0.5, START.r+0.5, 'ro');
+plot(GOAL.c+0.5, GOAL.r+0.5, 'go');
+for ri = 1:ROW
+  for ci = 1:COL
+    if( map(ri,ci) == O ) % if it is a obstacle draw it
+      plot(ci+0.5, ri+0.5, 'kx');
+    end
+  end
+end
 
 
 
