@@ -1,6 +1,8 @@
 function jumppointsearch(input_map)
 clc; clear all; close all;
 
+global map;
+
 % validate input map
 global S; S = 7;
 global G; G = 8;
@@ -107,9 +109,42 @@ for ri = 1:ROW
   end
 end
 
+% TESTING
+%neighbor_rc(1,1)
+%neighbor_rc(2,2)
+%neighbor_rc(3,3)
+%neighbor_rc(4,4)
+
+
 % identify successor
+cur_node_r = start_r;
+cur_node_c = start_c;
 
 % traverse the map
 
+function [rs,re,cs,ce] = neighbor_rc(r,c)
+global map; global ROW; global COL;
+%    r-1
+% c-1   c+1
+%    r+1
+if( r-1 > 0   ) rs = r-1; else rs = 1; end
+if( r+1 < ROW ) re = r+1; else re = ROW; end
+if( c-1 > 0   ) cs = c-1; else cs = 1; end
+if( c+1 < COL ) ce = c+1; else ce = COL; end
+
+%display(sprintf('DEBUG: neighbors(): %d,%d - %d,%d,%d,%d',r,c,rs,re,cs,ce));
+
+% return - all neighbor except obstacles
+function N = neighbors(r,c)
+global map; global ROW; global COL;
+
+[rs,re,cs,ce] = neighbor_rc(r,c);
+
+
+
+
+function prune(r,c)
+global ROW;
+global COL;
 
 function jump
