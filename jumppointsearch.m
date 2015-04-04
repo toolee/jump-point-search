@@ -125,19 +125,19 @@ cur_node_c = start_c;
 % traverse the map
 
 %--------------------------------------------------------------------------
-% function: neighbor_rc
+% function: neighbor_se
 % param   : r current row
 % param   : c current col
-% return  : r start/end, c start/end
+% return  : r (s)tart/(e)nd, c (s)tart/(e)nd
 %--------------------------------------------------------------------------
-function [rs,re,cs,ce] = neighbor_rc(r,c)
+function [rs,re,cs,ce] = neighbor_se(r,c)
 global map; global ROW; global COL; global S; global G; global C; global O;
 %    r-1
 % c-1   c+1
 %    r+1
-if( r-1 > 0   ) rs = r-1; else rs = 1; end
+if( r-1 > 0   ) rs = r-1; else rs = 1;   end
 if( r+1 < ROW ) re = r+1; else re = ROW; end
-if( c-1 > 0   ) cs = c-1; else cs = 1; end
+if( c-1 > 0   ) cs = c-1; else cs = 1;   end
 if( c+1 < COL ) ce = c+1; else ce = COL; end
 
 %display(sprintf('DEBUG: neighbors(): %d,%d - %d,%d,%d,%d',r,c,rs,re,cs,ce));
@@ -151,7 +151,7 @@ if( c+1 < COL ) ce = c+1; else ce = COL; end
 function n = neighbors(r,c)
 global map; global ROW; global COL; global S; global G; global C; global O;
 
-[rs,re,cs,ce] = neighbor_rc(r,c);
+[rs,re,cs,ce] = neighbor_se(r,c);
 
 i = 1;
 
@@ -181,4 +181,33 @@ for i = 1:size(n,2)
   end
 end
 
-function jump
+%--------------------------------------------------------------------------
+% function: jump
+% param   :
+% return  :
+%--------------------------------------------------------------------------
+function jump(r,c,dir,s,g)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
