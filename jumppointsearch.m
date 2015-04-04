@@ -100,7 +100,7 @@ end
 % param   :
 % return  :
 %--------------------------------------------------------------------------
-function jump(r,c,dir,s,g)
+function jump(x,dir,s,g)
 
 
 
@@ -169,7 +169,6 @@ no_path_large_map = ...
         ];
 ret = small_map;
  
-
 %--------------------------------------------------------------------------
 % function: validate_map
 %   check for existence of start, goal, and number of occurances
@@ -225,7 +224,15 @@ for ri = 1:ROW
   end
 end
 
-
+%--------------------------------------------------------------------------
+% function: direction
+%   figures out the direction of a node to another
+% param   : x
+% param   : n
+% return  : UP,DOWN,LEFT,RIGHT,DIAGONAL
+%--------------------------------------------------------------------------
+function direction(x,n)
+% UP
 
 
 
