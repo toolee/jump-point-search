@@ -4,6 +4,13 @@ clc; clear all; close all;
 global map; global ROW; global COL; global S; global G; global C; global O;
 global START; global GOAL;
 
+% setup direction constants
+global NORTH; global EAST; global SOUTH; global WEST;
+global NW; global NE; global SW; global SE;
+NW   = 1;   NORTH = 2;   NE    = 3;
+WEST = 4;                EAST  = 6;
+SW   = 7;   SOUTH = 8;   SE    = 9;
+
 create_map_symbols();
 
 if( nargin == 0 )
@@ -20,6 +27,7 @@ display(sprintf('INFO: 0 - obstacle | 1 - clear path | 7 - start | 8 - goal'));
 
 validate_map();
 
+% draw an initial map
 draw_map();
 
 
@@ -29,6 +37,10 @@ draw_map();
 %neighbor_rc(3,3)
 %neighbor_rc(4,4)
 prune(neighbors(3,3));
+
+% a.r = 3; a.c = 3;
+% b.r = 3; b.c = 3;
+% direction(a,b);
 
 
 
@@ -101,9 +113,6 @@ end
 % return  :
 %--------------------------------------------------------------------------
 function jump(x,dir,s,g)
-
-
-
 
 %--------------------------------------------------------------------------
 % function: create_map_symbols
@@ -225,15 +234,76 @@ for ri = 1:ROW
 end
 
 %--------------------------------------------------------------------------
+% function: dir_ns
+%   figures out the direction for NORTH or SOUTH
+% param   : x
+% param   : n
+% return  : North, South, 0 for no change
+%--------------------------------------------------------------------------
+function dir = dir_ns(x,n)
+global NORTH; global EAST; global SOUTH; global WEST;
+global NW; global NE; global SW; global SE;
+% Test direction UP
+d = n.r - x.r;
+if     ( d == 0 ) % on the same row
+  dir = 0; return;
+elseif ( d  > 0 ) % n is DOWN
+  dir = SOUTH; return;
+else              % n is UP
+  dir = NORTH; return;
+end
+
+%--------------------------------------------------------------------------
+% function: dir_ew
+%   figures out the direction for EAST or WEST
+% param   : x
+% param   : n
+% return  : EAST, WEST, 0 for no change
+%--------------------------------------------------------------------------
+function dir = dir_ew(x,n)
+global NORTH; global EAST; global SOUTH; global WEST;
+global NW; global NE; global SW; global SE;
+% Test direction UP
+d = n.c - x.c;
+if     ( d == 0 ) % on the same col
+  dir = 0; return;
+elseif ( d  > 0 ) % n is EAST
+  dir = EAST; return;
+else              % n is WEST
+  dir = WEST; return;
+end
+
+%--------------------------------------------------------------------------
 % function: direction
 %   figures out the direction of a node to another
 % param   : x
 % param   : n
-% return  : UP,DOWN,LEFT,RIGHT,DIAGONAL
+% return  : actual direction
 %--------------------------------------------------------------------------
-function direction(x,n)
-% UP
+function dir = direction(x,n)
+global NORTH; global EAST; global SOUTH; global WEST;
+global NW; global NE; global SW; global SE;
 
+d1 = dir_ns(x,n);
+d2 = dir_ew(x,n);
+
+if ( d1 == 0 && d2 == 0 )
+  display('ERROR: direction () same node');
+end
+
+if ( d1 == NORTH && d2 == WEST )
+  dir = NW;
+elseif ( d1 == NORTH && d2 == EAST )
+  dir = NE;
+elseif ( d1 == SOUTH && d2 == WEST )
+  dir = SW;
+elseif ( d1 == SOUTH && d2 == EAST )
+  dir = SE;
+elseif ( d1 == 0 )
+  dir = d2;
+elseif ( d2 == 0 )
+  dir = d1;
+end
 
 
 
