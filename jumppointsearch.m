@@ -5,11 +5,11 @@ global map; global ROW; global COL; global S; global G; global C; global O;
 global START; global GOAL;
 
 % setup direction constants
-global NORTH; global EAST; global SOUTH; global WEST;
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
 global NW; global NE; global SW; global SE;
-NW   = 1;   NORTH = 2;   NE    = 3;
-WEST = 4;                EAST  = 6;
-SW   = 7;   SOUTH = 8;   SE    = 9;
+NW   = 1;   NORTH  = 2;  NE    = 3;
+WEST = 4;   CENTER = 0;  EAST  = 6;
+SW   = 7;   SOUTH  = 8;  SE    = 9;
 
 create_map_symbols();
 
