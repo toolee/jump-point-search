@@ -38,9 +38,9 @@ draw_map();
 %neighbor_rc(4,4)
 prune(neighbors(3,3));
 
-% a.r = 3; a.c = 3;
-% b.r = 3; b.c = 3;
-% direction(a,b);
+%a.r = 3; a.c = 3;
+%b.r = 4; b.c = 4;
+%display(['INFO: ' dir_string(direction(a,b))]);
 
 
 
@@ -305,9 +305,38 @@ elseif ( d2 == 0 )
   dir = d1;
 end
 
+%--------------------------------------------------------------------------
+% function: dir_string
+%   print direction
+% param   : dir
+% return  : none
+%--------------------------------------------------------------------------
+function str = dir_string(dir)
+global NORTH; global EAST; global SOUTH; global WEST;
+global NW; global NE; global SW; global SE;
 
-
-
+switch dir
+  case 0
+    str = sprintf('CENTER');
+  case NORTH
+    str = sprintf('NORTH');
+  case EAST
+    str = sprintf('EAST');
+  case SOUTH
+    str = sprintf('SOUTH');
+  case WEST
+    str = sprintf('WEST');
+  case NW
+    str = sprintf('NW');
+  case NE
+    str = sprintf('NE');
+  case SW
+    str = sprintf('SW');
+  case SE
+    str = sprintf('SE');
+  otherwise
+    str = sprintf('ERROR: unknown direction');
+end
 
 
 
