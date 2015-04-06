@@ -36,14 +36,15 @@ draw_map();
 %neighbor_rc(2,2)
 %neighbor_rc(3,3)
 %neighbor_rc(4,4)
-prune(neighbors(3,3));
+%prune(neighbors(3,3));
 
 %a.r = 3; a.c = 3;
 %b.r = 4; b.c = 4;
 %display(['INFO: ' dir_string(direction(a,b))]);
-
-
-
+TEST_dir_east_west;
+TEST_dir_north_south
+TEST_step;
+return;
 % identify successor
 cur_node_r = start_r;
 cur_node_c = start_c;
@@ -240,12 +241,12 @@ end
 %--------------------------------------------------------d------------------
 % function: dir_north_south
 %   figures out the direction for NORTH or SOUTH
-% param   : x
-% param   : n
+% param   : x a node
+% param   : n another node
 % return  : North, South, 0 for no change
 %--------------------------------------------------------------------------
 function dir = dir_north_south(x,n)
-global NORTH; global EAST; global SOUTH; global WEST;
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
 global NW; global NE; global SW; global SE;
 % Test direction UP
 d = n.r - x.r;
@@ -260,12 +261,12 @@ end
 %--------------------------------------------------------------------------
 % function: dir_east_west
 %   figures out the direction for EAST or WEST
-% param   : x
-% param   : n
+% param   : x a node
+% param   : n another node
 % return  : EAST, WEST, 0 for no change
 %--------------------------------------------------------------------------
 function dir = dir_east_west(x,n)
-global NORTH; global EAST; global SOUTH; global WEST;
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
 global NW; global NE; global SW; global SE;
 % Test direction UP
 d = n.c - x.c;
@@ -285,7 +286,7 @@ end
 % return  : actual direction
 %--------------------------------------------------------------------------
 function dir = direction(x,n)
-global NORTH; global EAST; global SOUTH; global WEST;
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
 global NW; global NE; global SW; global SE;
 
 d1 = dir_north_south(x,n);
@@ -316,7 +317,7 @@ end
 % return  : none
 %--------------------------------------------------------------------------
 function str = dir_string(dir)
-global NORTH; global EAST; global SOUTH; global WEST;
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
 global NW; global NE; global SW; global SE;
 
 switch dir
@@ -349,6 +350,119 @@ end
 % param   : dir direction
 % return  : n new node
 %--------------------------------------------------------------------------
-function step(x,dir)
+function n = step(x,dir)
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
+global NW; global NE; global SW; global SE;
+
+switch dir
+  case NORTH
+    n.r = x.r - 1;
+    n.c = x.c;
+  case SOUTH
+    n.r = x.r + 1;
+    n.c = x.c;
+  case EAST
+    n.r = x.r;
+    n.c = x.c + 1;
+  case WEST
+    n.r = x.r;
+    n.c = x.c - 1;
+  case NW
+    n.r = x.r - 1;
+    n.c = x.c - 1;
+  case NE
+    n.r = x.r - 1;
+    n.c = x.c + 1;
+  case SW
+    n.r = x.r + 1;
+    n.c = x.c - 1;
+  case SE
+    n.r = x.r + 1;
+    n.c = x.c + 1;
+  otherwise
+    n.r = -1;
+    n.c = -1;
+end
+
+%--------------------------------------------------------------------------
+% TESTS
+%--------------------------------------------------------------------------
+function TEST_step
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
+global NW; global NE; global SW; global SE;
+
+status = 1;
+
+x.r = 3; x.c = 3;
+n = step(x,NORTH);
+if ( ~(n.r == 2 && n.c == 3) ) status = 0; end
+
+n = step(x,SOUTH);
+if ( ~(n.r == 4 && n.c == 3) ) status = 0; end
+
+n = step(x,EAST);
+if ( ~(n.r == 3 && n.c == 4) ) status = 0; end
+
+n = step(x,WEST);
+if ( ~(n.r == 3 && n.c == 2) ) status = 0; end
+
+n = step(x,NW);
+if ( ~(n.r == 2 && n.c == 2) ) status = 0; end
+
+n = step(x,NE);
+if ( ~(n.r == 2 && n.c == 4) ) status = 0; end
+
+n = step(x,SW);
+if ( ~(n.r == 4 && n.c == 2) ) status = 0; end
+
+n = step(x,SE);
+if ( ~(n.r == 4 && n.c == 4) ) status = 0; end
+
+if (status == 0) display('ERROR: TEST_step() failed'); else
+  display('INFO: TEST_step() passed');
+end
+
+function TEST_dir_east_west
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
+global NW; global NE; global SW; global SE;
+
+status = 1;
+
+n1.r = 3; n1.c = 3;
+n2.r = 5; n2.c = 6;
+dir = dir_east_west(n1,n2);
+if( dir ~= EAST ) status = 0; display('ERROR: TEST_dir_east_west: EAST failed'); end
+
+n2.r = 5; n2.c = 1;
+dir = dir_east_west(n1,n2);
+if( dir ~= WEST ) status = 0; display('ERROR: TEST_dir_east_west: WEST failed'); end
+
+if (status == 0) display('ERROR: TEST_dir_east_west() failed'); else
+  display('INFO: TEST_dir_east_west() passed');
+end
+
+function TEST_dir_north_south
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
+global NW; global NE; global SW; global SE;
+
+status = 1;
+
+n1.r = 3; n1.c = 3;
+n2.r = 1; n2.c = 6;
+dir = dir_north_south(n1,n2);
+if( dir ~= NORTH ) status = 0; display('ERROR: TEST_dir_north_south: NORTH failed'); end
+
+n2.r = 5; n2.c = 1;
+dir = dir_north_south(n1,n2);
+if( dir ~= SOUTH ) status = 0; display('ERROR: TEST_dir_north_south: SOUTH failed'); end
+
+if (status == 0) display('ERROR: TEST_dir_north_south() failed'); else
+  display('INFO: TEST_dir_north_south() passed');
+end
+
+
+
+
+
 
 
