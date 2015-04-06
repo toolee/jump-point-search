@@ -418,8 +418,8 @@ if ( ~(n.r == 4 && n.c == 2) ) status = 0; end
 n = step(x,SE);
 if ( ~(n.r == 4 && n.c == 4) ) status = 0; end
 
-if (status == 0) display('ERROR: TEST_step() failed'); else
-  display('INFO: TEST_step() passed');
+if (status == 0) display('TEST: FAILED: step()'); else
+  display('TEST: PASSED: step()');
 end
 
 function TEST_dir_east_west
@@ -431,14 +431,14 @@ status = 1;
 n1.r = 3; n1.c = 3;
 n2.r = 5; n2.c = 6;
 dir = dir_east_west(n1,n2);
-if( dir ~= EAST ) status = 0; display('ERROR: TEST_dir_east_west: EAST failed'); end
+if( dir ~= EAST ) status = 0; display('TEST: FAILED: dir_east_west: EAST'); end
 
 n2.r = 5; n2.c = 1;
 dir = dir_east_west(n1,n2);
-if( dir ~= WEST ) status = 0; display('ERROR: TEST_dir_east_west: WEST failed'); end
+if( dir ~= WEST ) status = 0; display('TEST: FAILED: dir_east_west: WEST'); end
 
-if (status == 0) display('ERROR: TEST_dir_east_west() failed'); else
-  display('INFO: TEST_dir_east_west() passed');
+if (status == 0) display('TEST: FAILED: dir_east_west'); else
+  display('TEST: PASSED: dir_east_west()');
 end
 
 function TEST_dir_north_south
@@ -450,14 +450,14 @@ status = 1;
 n1.r = 3; n1.c = 3;
 n2.r = 1; n2.c = 6;
 dir = dir_north_south(n1,n2);
-if( dir ~= NORTH ) status = 0; display('ERROR: TEST_dir_north_south: NORTH failed'); end
+if( dir ~= NORTH ) status = 0; display('TEST: FAILED: dir_north_south: NORTH'); end
 
 n2.r = 5; n2.c = 1;
 dir = dir_north_south(n1,n2);
-if( dir ~= SOUTH ) status = 0; display('ERROR: TEST_dir_north_south: SOUTH failed'); end
+if( dir ~= SOUTH ) status = 0; display('TEST: FAILED: dir_north_south: SOUTH'); end
 
-if (status == 0) display('ERROR: TEST_dir_north_south() failed'); else
-  display('INFO: TEST_dir_north_south() passed');
+if (status == 0) display('TEST: FAILED: dir_north_south'); else
+  display('TEST: PASSED: dir_north_south()');
 end
 
 
