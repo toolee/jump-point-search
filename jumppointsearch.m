@@ -12,7 +12,7 @@ WEST = 4;   CENTER = 0;  EAST  = 6;
 SW   = 7;   SOUTH  = 8;  SE    = 9;
 
 % This will only run unit test then exit
-unit_test = true;
+unit_test = false;
 
 create_map_symbols();
 
@@ -33,27 +33,31 @@ validate_map();
 % draw an initial map
 draw_map();
 
-
-% TESTING
-%neighbor_rc(1,1)
-%neighbor_rc(2,2)
-%neighbor_rc(3,3)
-%neighbor_rc(4,4)
-%prune(neighbors(3,3));
-
-%a.r = 3; a.c = 3;
-%b.r = 4; b.c = 4;
-%display(['INFO: ' dir_string(direction(a,b))]);
 if ( unit_test )
+  % TESTING
+  %neighbor_rc(1,1)
+  %neighbor_rc(2,2)
+  %neighbor_rc(3,3)
+  %neighbor_rc(4,4)
+  %prune(neighbors(3,3));
+  
+  %a.r = 3; a.c = 3;
+  %b.r = 4; b.c = 4;
+  %display(['INFO: ' dir_string(direction(a,b))]);
   TEST_dir_east_west;
   TEST_dir_north_south
   TEST_step;
   TEST_is_forced_neighbor_exist
+  %TEST_jump;
   return;
 end
+
+% compute h values for all nodes, create nodes for the first time
+nodes = astar_compute_h;
+
+nodes = draw_fgh_value(nodes);
+
 % identify successor
-cur_node_r = start_r;
-cur_node_c = start_c;
 
 % traverse the map
 
@@ -121,27 +125,71 @@ end
 % param   : dir direction
 % param   : s start node
 % param   : g goal node
-% return  : n jump point
+% return  : ret_n jump point - null - no jump point
+%                            - non-null - actual jump point
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
-function [status,n] = jump(x,dir,s,g)
-n = step(x,dir);
-status = 0;
+function ret_n = jump(x,dir,s,g)
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
+global NW; global NE; global SW; global SE;
 
-if ( is_node_valid(n) == false ) 
-  status = 0; 
-  return; 
+% stepping toward 'dir'
+n = step(x,dir);
+
+ret_n = [];
+
+if ( is_outside(n) && is_obstacle(n) ) 
+  return;
 end
 
 if ( n == GOAL ) 
-  status = 1; 
+  ret_n = n;
   return; 
 end
 
 if ( is_forced_neighbor_exist(x,dir,s,g) )
-  status = 0;
+  ret_n = n;
   return;
 end
+
+if ( is_dir_diagonal(dir) )
+  
+  % set the opposite of the diagonal dir
+  % d1 and d2 represent the striaght moves
+  d = [];
+  if ( dir == NW )
+    d(1) = EAST;
+    d(2) = SOUTH;
+  elseif ( dir == NE )
+    d(1) = WEST;
+    d(2) = SOUTH;
+  elseif ( dir == SW )
+    d(1) = NORTH;
+    d(2) = EAST;
+  elseif ( dir == SE )
+    d(1) = NORTH;
+    d(2) = WEST;
+  end
+  
+  % run thru d1 and d2 straight moves
+  if ( size( jump(n,d(1),s,g) ) > 0 )
+    ret_n = n;
+    return;
+  end
+  if ( size( jump(n,d(2),s,g) ) > 0 )
+    ret_n = n;
+    return;
+  end
+end
+
+% recurse with node n
+jump(n,dir,s,g);
+
+function TEST_jump
+global map; global ROW; global COL; global S; global G; global C; global O;
+global START; global GOAL;
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
+global NW; global NE; global SW; global SE;
 
 %--------------------------------------------------------------------------
 % function: is_forced_neighbor_exist
@@ -379,6 +427,15 @@ for ri = 1:ROW
   end
 end
 
+function ret = is_dir_diagonal(dir)
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
+global NW; global NE; global SW; global SE;
+ret = false;
+if ( dir == NW || dir == NE || dir == SW || dir == SE )
+  ret = true;
+  return;
+end
+
 %--------------------------------------------------------d------------------
 % function: dir_north_south
 %   figures out the direction for NORTH or SOUTH
@@ -526,6 +583,102 @@ switch dir
     n.r = -1;
     n.c = -1;
 end
+
+function nodes = draw_fgh_value(nodes)
+global map; global ROW; global COL; global S; global G; global C; global O;
+global START; global GOAL;
+
+% setup direction constants
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
+global NW; global NE; global SW; global SE;
+global INIT_G_VALUE;
+global INIT_F_VALUE;
+% draw h values
+for ni = 1:size(nodes,2)
+    % if it is not an obstacle draw debug info
+    if( map(nodes(ni).r,nodes(ni).c) ~= O )
+        %------------------------
+        % draw f = g + h
+        s = sprintf('%0.2f',nodes(ni).h);
+        if( nodes(ni).h_hldr == 0 )
+            nodes(ni).h_hldr = text(nodes(ni).c+0.8,nodes(ni).r+0.1,s);
+        else
+            set(nodes(ni).h_hldr,'String',s);
+        end
+        if( nodes(ni).g ~= INIT_G_VALUE )
+            s = sprintf('%0.2f',nodes(ni).g);
+            if( nodes(ni).g_hldr == 0 )
+                nodes(ni).g_hldr = text(nodes(ni).c+0.45,nodes(ni).r+0.1,s);
+            else
+                set(nodes(ni).g_hldr,'String',s);
+            end
+        end
+        if( nodes(ni).f ~= INIT_F_VALUE )
+            s = sprintf('%0.2f',nodes(ni).f);
+            if( nodes(ni).f_hldr == 0 )
+                nodes(ni).f_hldr = text(nodes(ni).c+0.1,nodes(ni).r+0.1,s);
+            else
+                set(nodes(ni).f_hldr,'String',s);
+            end
+        end
+        %----------------------------
+        % draw arrow
+        update_arrow = false;
+        if( 0 < nodes(ni).r+1 && nodes(ni).r+1 == nodes(ni).parent_r && nodes(ni).r+1 < ROW )
+            s = 'v'; update_arrow = true;
+        elseif( 0 < nodes(ni).r-1 && nodes(ni).r-1 == nodes(ni).parent_r && nodes(ni).r-1 < ROW )
+            s = '\^'; update_arrow = true;
+        elseif( 0 < nodes(ni).c+1 && nodes(ni).c+1 == nodes(ni).parent_c && nodes(ni).c+1 < COL )
+            s = '>'; update_arrow = true;
+        elseif( 0 < nodes(ni).c-1 && nodes(ni).c-1 == nodes(ni).parent_c && nodes(ni).c-1 < COL )
+            s = '<'; update_arrow = true;
+        end
+        if( update_arrow )
+            if( nodes(ni).arrow_hldr == 0 )
+                nodes(ni).arrow_hldr = text(nodes(ni).c+0.05,nodes(ni).r+0.1,s);
+            else
+                set(nodes(ni).arrow_hldr,'String',s);
+            end
+        end
+    end
+end
+function nodes = astar_compute_h
+global map; global ROW; global COL; global S; global G; global C; global O;
+global START; global GOAL;
+
+% setup direction constants
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
+global NW; global NE; global SW; global SE;
+
+nodes(ROW*COL) = struct('r',[],'c',[],'h',[],'g',[],'f',[], ...
+    'parent_r',[],'parent_c',[],'h_hldr',[],'g_hldr',[],'f_hldr',[],...
+    'arrow_hldr',[]);
+
+[goal_r,goal_c] = find(map==G);
+
+global INIT_G_VALUE;
+INIT_G_VALUE = 99999;
+global INIT_F_VALUE;
+INIT_F_VALUE = 99999;
+
+n = 1;
+for r = 1:ROW
+  for c = 1:COL
+          nodes(n).r = r;
+          nodes(n).c = c;
+          nodes(n).h = sqrt( abs(goal_r-r)^2 + abs(goal_c-c)^2 );
+          nodes(n).g = INIT_G_VALUE;
+          nodes(n).f = INIT_F_VALUE;
+          nodes(n).parent_r = 0;
+          nodes(n).parent_c = 0;
+          nodes(n).h_hldr = 0;
+          nodes(n).g_hldr = 0;
+          nodes(n).f_hldr = 0;
+          nodes(n).arrow_hldr = 0;
+          n = n+1;
+  end
+end
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TESTS
