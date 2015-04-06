@@ -238,13 +238,13 @@ for ri = 1:ROW
 end
 
 %--------------------------------------------------------d------------------
-% function: dir_ns
+% function: dir_north_south
 %   figures out the direction for NORTH or SOUTH
 % param   : x
 % param   : n
 % return  : North, South, 0 for no change
 %--------------------------------------------------------------------------
-function dir = dir_ns(x,n)
+function dir = dir_north_south(x,n)
 global NORTH; global EAST; global SOUTH; global WEST;
 global NW; global NE; global SW; global SE;
 % Test direction UP
@@ -258,13 +258,13 @@ else              % n is UP
 end
 
 %--------------------------------------------------------------------------
-% function: dir_ew
+% function: dir_east_west
 %   figures out the direction for EAST or WEST
 % param   : x
 % param   : n
 % return  : EAST, WEST, 0 for no change
 %--------------------------------------------------------------------------
-function dir = dir_ew(x,n)
+function dir = dir_east_west(x,n)
 global NORTH; global EAST; global SOUTH; global WEST;
 global NW; global NE; global SW; global SE;
 % Test direction UP
@@ -288,8 +288,8 @@ function dir = direction(x,n)
 global NORTH; global EAST; global SOUTH; global WEST;
 global NW; global NE; global SW; global SE;
 
-d1 = dir_ns(x,n);
-d2 = dir_ew(x,n);
+d1 = dir_north_south(x,n);
+d2 = dir_east_west(x,n);
 
 if ( d1 == 0 && d2 == 0 )
   display('ERROR: direction () same node');
