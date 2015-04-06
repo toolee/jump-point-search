@@ -109,10 +109,14 @@ end
 
 %--------------------------------------------------------------------------
 % function: jump
-% param   :
-% return  :
+% param   : x initial node
+% param   : dir direction
+% param   : s start node
+% param   : g goal node
+% return  : n jump point
 %--------------------------------------------------------------------------
-function jump(x,dir,s,g)
+function n = jump(x,dir,s,g)
+
 
 %--------------------------------------------------------------------------
 % function: create_map_symbols
@@ -233,7 +237,7 @@ for ri = 1:ROW
   end
 end
 
-%--------------------------------------------------------------------------
+%--------------------------------------------------------d------------------
 % function: dir_ns
 %   figures out the direction for NORTH or SOUTH
 % param   : x
@@ -338,6 +342,13 @@ switch dir
     str = sprintf('ERROR: unknown direction');
 end
 
-
+%--------------------------------------------------------------------------
+% function: step
+%   one step over the direction specified
+% param   : x initial node
+% param   : dir direction
+% return  : n new node
+%--------------------------------------------------------------------------
+function step(x,dir)
 
 
