@@ -58,12 +58,12 @@ cur_node_c = start_c;
 % traverse the map
 
 %--------------------------------------------------------------------------
-% function: neighbor_se
+% function: neighbor_start_end_index
 % param   : r current row
 % param   : c current col
 % return  : r (s)tart/(e)nd, c (s)tart/(e)nd
 %--------------------------------------------------------------------------
-function [rs,re,cs,ce] = neighbor_se(r,c)
+function [rs,re,cs,ce] = neighbor_start_end_index(r,c)
 global map; global ROW; global COL; global S; global G; global C; global O;
 %    r-1
 % c-1   c+1
@@ -84,7 +84,7 @@ if( c+1 < COL ) ce = c+1; else ce = COL; end
 function n = neighbors(r,c)
 global map; global ROW; global COL; global S; global G; global C; global O;
 
-[rs,re,cs,ce] = neighbor_se(r,c);
+[rs,re,cs,ce] = neighbor_start_end_index(r,c);
 
 i = 1;
 
@@ -99,7 +99,7 @@ end
 %--------------------------------------------------------------------------
 % function: prune
 % param   : n all neighbors
-% return  : pruned neighbors
+% return  : pruned neighbors (no obstacle)
 %--------------------------------------------------------------------------
 function prune(n)
 global map; global ROW; global COL; global S; global G; global C; global O;
@@ -145,11 +145,11 @@ end
 
 %--------------------------------------------------------------------------
 % function: is_forced_neighbor_exist
-% param   : x - current node
+% param   : n - current node
 % param   : dir - dir for parent of x to x
 % return  : true or false
 %--------------------------------------------------------------------------
-function ret = is_forced_neighbor_exist(x,dir)
+function ret = is_forced_neighbor_exist(n,dir)
 global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
 global NW; global NE; global SW; global SE;
 
@@ -161,31 +161,60 @@ if ( dir == CENTER )
   return; 
 end
 
+%--------------------------------------
 % diagonal move
-if ( dir == NW || dir == NE || dir == SW || dir == SE )
+if ( dir == NW )
+  n1 = make_node_struct( n.r, n.c - 1 );
+  n2 = make_node_struct( n.r - 1, n.c );
+  if ( is_inside(n1) && is_obstacle(n1) || is_inside(n2) && is_obstacle(n2) )
+    ret = true;
+    return;
+  end
 end
 
+if ( dir == NE )
+  n1 = make_node_struct( n.r, n.c + 1 );
+  n2 = make_node_struct( n.r - 1, n.c );
+  if ( is_inside(n1) && is_obstacle(n1) || is_inside(n2) && is_obstacle(n2) )
+    ret = true;
+    return;
+  end
+end
+
+if ( dir == SW )
+  n1 = make_node_struct( n.r, n.c - 1 );
+  n2 = make_node_struct( n.r + 1, n.c );
+  if ( is_inside(n1) && is_obstacle(n1) || is_inside(n2) && is_obstacle(n2) )
+    ret = true;
+    return;
+  end
+end
+
+if ( dir == SE )
+  n1 = make_node_struct( n.r, n.c + 1 );
+  n2 = make_node_struct( n.r + 1, n.c );
+  if ( is_inside(n1) && is_obstacle(n1) || is_inside(n2) && is_obstacle(n2) )
+    ret = true;
+    return;
+  end
+end
+
+%----------------------------------------
 % striaght move
-if ( dir == EAST )
-  
-end
-
-function TEST_is_forced_neighbor_exist
-global map; global ROW; global COL; global S; global G; global C; global O;
-global START; global GOAL;
-
-global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
-global NW; global NE; global SW; global SE;
-
-status = 1;
-
-n.r = 3; n.c = 2;
-if ( is_forced_neighbor_exist(n,EAST) == false )
-  display('TEST: FAILED: is_forced_neighbor_exist(): NE');
-end
-
-if ( status == 0 )
-  display('TEST: FAILED: is_forced_neighbor_exist()');
+if ( dir == EAST || dir == WEST )
+  n1 = make_node_struct( n.r-1, n.c );
+  n2 = make_node_struct( n.r+1, n.c );
+  if ( is_inside(n1) && is_obstacle(n1) || is_inside(n2) && is_obstacle(n2) )
+    ret = true;
+    return;
+  end
+elseif ( dir == NORTH || dir == SOUTH )
+  n1 = make_node_struct( n.r, n.c-1 );
+  n2 = make_node_struct( n.r, n.c+1 );
+  if ( is_inside(n1) && is_obstacle(n1) || is_inside(n2) && is_obstacle(n2) )
+    ret = true;
+    return;
+  end
 end
 
 %--------------------------------------------------------------------------
@@ -292,6 +321,37 @@ if( num_start > 1 || num_goal > 1 )
   return;
 end
 
+%--------------------------------------------------------------------------
+% function: is_obstacle
+% param   :
+% return  : true or false
+%--------------------------------------------------------------------------
+function ret = is_obstacle(n)
+global map; global ROW; global COL; global S; global G; global C; global O;
+global START; global GOAL;
+ret = false;
+if ( map(n.r, n.c) == O ) ret = true; return; end
+
+function ret = is_not_obstacle(n)
+  ret = not(is_obstacle(n));
+  
+%--------------------------------------------------------------------------
+% function: is_outside
+% param   :
+% return  : true or false
+%--------------------------------------------------------------------------
+function ret = is_outside(n)
+global map; global ROW; global COL;
+ret = false;
+if ( n.r < 1 || n.r >= ROW ) ret = true; return; end
+if ( n.c < 1 || n.c >= COL ) ret = true; return; end
+
+function ret = is_inside(n)
+  ret = not(is_outside(n));
+
+function n = make_node_struct(r,c)
+  n.r = r; n.c = c;
+  
 %--------------------------------------------------------------------------
 % function: draw_map
 %   Draws the initial base map with start, goal, and obstacles
@@ -543,7 +603,68 @@ if (status == 0) display('TEST: FAILED: dir_north_south'); else
   display('TEST: PASSED: dir_north_south()');
 end
 
+function TEST_is_forced_neighbor_exist
+global map; global ROW; global COL; global S; global G; global C; global O;
+global START; global GOAL;
 
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
+global NW; global NE; global SW; global SE;
+
+status = 1;
+
+n.r = 3; n.c = 2;
+if ( is_forced_neighbor_exist(n,EAST) == false )
+  display('TEST: FAILED: is_forced_neighbor_exist(): EAST');
+end
+if ( is_forced_neighbor_exist(n,WEST) == false )
+  display('TEST: FAILED: is_forced_neighbor_exist(): WEST');
+end
+% the other side
+n.r = 1; n.c = 2;
+if ( is_forced_neighbor_exist(n,EAST) == false )
+  display('TEST: FAILED: is_forced_neighbor_exist(): EAST 2');
+end
+if ( is_forced_neighbor_exist(n,WEST) == false )
+  display('TEST: FAILED: is_forced_neighbor_exist(): WEST 2');
+end
+
+n.r = 2; n.c = 3;
+if ( is_forced_neighbor_exist(n,NORTH) == false )
+  display('TEST: FAILED: is_forced_neighbor_exist(): NORTH');
+end
+if ( is_forced_neighbor_exist(n,SOUTH) == false )
+  display('TEST: FAILED: is_forced_neighbor_exist(): SOUTH');
+end
+% the other side
+n.r = 2; n.c = 1;
+if ( is_forced_neighbor_exist(n,NORTH) == false )
+  display('TEST: FAILED: is_forced_neighbor_exist(): NORTH 2');
+end
+if ( is_forced_neighbor_exist(n,SOUTH) == false )
+  display('TEST: FAILED: is_forced_neighbor_exist(): SOUTH 2');
+end
+
+n.r = 2; n.c = 1;
+if ( is_forced_neighbor_exist(n,NE) == false )
+  display('TEST: FAILED: is_forced_neighbor_exist(): NE');
+end
+if ( is_forced_neighbor_exist(n,SE) == false )
+  display('TEST: FAILED: is_forced_neighbor_exist(): SE');
+end
+
+n.r = 2; n.c = 3;
+if ( is_forced_neighbor_exist(n,NW) == false )
+  display('TEST: FAILED: is_forced_neighbor_exist(): NW');
+end
+if ( is_forced_neighbor_exist(n,SW) == false )
+  display('TEST: FAILED: is_forced_neighbor_exist(): SW');
+end
+
+if ( status == 0 )
+  display('TEST: FAILED: is_forced_neighbor_exist()');
+else
+  display('TEST: PASSED: is_forced_neighbor_exist()');
+end
 
 
 
