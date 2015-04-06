@@ -11,10 +11,13 @@ NW   = 1;   NORTH  = 2;  NE    = 3;
 WEST = 4;   CENTER = 0;  EAST  = 6;
 SW   = 7;   SOUTH  = 8;  SE    = 9;
 
+% This will only run unit test then exit
+unit_test = true;
+
 create_map_symbols();
 
 if( nargin == 0 )
-  map = use_canned_map();
+  map = use_canned_map(unit_test);
 elseif ( nargin == 1)
   map = input_map;
 end
@@ -41,10 +44,13 @@ draw_map();
 %a.r = 3; a.c = 3;
 %b.r = 4; b.c = 4;
 %display(['INFO: ' dir_string(direction(a,b))]);
-TEST_dir_east_west;
-TEST_dir_north_south
-TEST_step;
-return;
+if ( unit_test )
+  TEST_dir_east_west;
+  TEST_dir_north_south
+  TEST_step;
+  TEST_is_forced_neighbor_exist
+  return;
+end
 % identify successor
 cur_node_r = start_r;
 cur_node_c = start_c;
@@ -132,6 +138,55 @@ if ( n == GOAL )
   return; 
 end
 
+if ( is_forced_neighbor_exist(x,dir,s,g) )
+  status = 0;
+  return;
+end
+
+%--------------------------------------------------------------------------
+% function: is_forced_neighbor_exist
+% param   : x - current node
+% param   : dir - dir for parent of x to x
+% return  : true or false
+%--------------------------------------------------------------------------
+function ret = is_forced_neighbor_exist(x,dir)
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
+global NW; global NE; global SW; global SE;
+
+ret = false;
+
+if ( dir == CENTER )
+  display('ERROR: is_forced_neighbor_exist(): CENTER'); 
+  ret = false; 
+  return; 
+end
+
+% diagonal move
+if ( dir == NW || dir == NE || dir == SW || dir == SE )
+end
+
+% striaght move
+if ( dir == EAST )
+  
+end
+
+function TEST_is_forced_neighbor_exist
+global map; global ROW; global COL; global S; global G; global C; global O;
+global START; global GOAL;
+
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
+global NW; global NE; global SW; global SE;
+
+status = 1;
+
+n.r = 3; n.c = 2;
+if ( is_forced_neighbor_exist(n,EAST) == false )
+  display('TEST: FAILED: is_forced_neighbor_exist(): NE');
+end
+
+if ( status == 0 )
+  display('TEST: FAILED: is_forced_neighbor_exist()');
+end
 
 %--------------------------------------------------------------------------
 % function: create_map_symbols
@@ -150,8 +205,15 @@ O = 0;
 % param   :
 % return  : canned map
 %--------------------------------------------------------------------------
-function ret = use_canned_map()
+function ret = use_canned_map(unit_test)
 global S; global G; global C; global O;
+unit_test_map = ...
+      [ S, C, C, C;
+        C, O, C, C;
+        C, C, C, C;
+        C, C, C, G;
+        ];
+
 small_map = ...
       [ S, C, C, C;
         C, C, O, C;
@@ -196,6 +258,11 @@ no_path_large_map = ...
         G, C, C, C, C, C, C, C, C, C;
         ];
 ret = small_map;
+
+% override to use unit_test_map
+if ( unit_test )
+  ret = unit_test_map;
+end
  
 %--------------------------------------------------------------------------
 % function: validate_map
@@ -354,7 +421,7 @@ switch dir
   case SE
     str = sprintf('SE');
   otherwise
-    str = sprintf('ERROR: unknown direction');
+    str = sprintf('ERROR: dir_string(): unknown direction'); % this should not happen
 end
 
 %--------------------------------------------------------------------------
@@ -362,7 +429,8 @@ end
 %   one step over the direction specified
 % param   : x initial node
 % param   : dir direction
-% return  : n new node
+% return  : n new node, expected behavior is it could be outside the grid, 
+%           or at an obstacle node
 %--------------------------------------------------------------------------
 function n = step(x,dir)
 global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
@@ -394,6 +462,7 @@ switch dir
     n.r = x.r + 1;
     n.c = x.c + 1;
   otherwise
+    display('ERROR: step(): CENTER'); % this should not happen
     n.r = -1;
     n.c = -1;
 end
