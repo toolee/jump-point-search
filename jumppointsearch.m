@@ -83,26 +83,36 @@ global START; global GOAL;
 global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
 global NW; global NE; global SW; global SE;
 
+x.r = 4; x.c = 1;
+successors =  identify_successor(x);
+if ( not( is_same_node( successors(1), struct('r',2,'c',1) ) ) )
+  display('TEST: FAILED: identify_successor 2');
+else
+  display('TEST: PASSED: identify_successor 2');
+end
+if ( not( is_same_node( successors(2), struct('r',3,'c',2) ) ) )
+  display('TEST: FAILED: identify_successor 2');
+else
+  display('TEST: PASSED: identify_successor 2');
+end
+if ( not( is_same_node( successors(3), struct('r',4,'c',4) ) ) )
+  display('TEST: FAILED: identify_successor 2');
+else
+  display('TEST: PASSED: identify_successor 2');
+end
+
 x.r = 1; x.c = 1;
 successors = identify_successor(x);
 if ( not( is_same_node( successors(1), struct('r',1,'c',2) ) ) )
-  display('TEST: FAILED: identify_successor');
+  display('TEST: FAILED: identify_successor 1');
 else
   display('TEST: PASSED: identify_successor 1');
-end
-
-x.r = 4; x.c = 1;
-successors =  identify_successor(x);
-if ( not( is_same_node( successors(1), struct('r',3,'c',2) ) ) )
-  display('TEST: FAILED: identify_successor');
-else
-  display('TEST: PASSED: identify_successor 2');
 end
 
 x.r = 3; x.c = 3;
 successors =  identify_successor(x);
 if ( not( is_same_node( successors(1), struct('r',2,'c',3) ) ) )
-  display('TEST: FAILED: identify_successor');
+  display('TEST: FAILED: identify_successor 3');
 else
   display('TEST: PASSED: identify_successor 3');
 end
