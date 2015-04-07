@@ -250,7 +250,7 @@ if ( is_dir_diagonal(dir) )
 end
 
 % recurse with node n
-jump(n,dir);
+ret_n = jump(n,dir);
 
 function TEST_jump
 global map; global ROW; global COL; global S; global G; global C; global O;
