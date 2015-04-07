@@ -446,8 +446,8 @@ function ret = is_not_obstacle(n)
 function ret = is_outside(n)
 global map; global ROW; global COL;
 ret = false;
-if ( n.r < 1 || n.r >= ROW ) ret = true; return; end
-if ( n.c < 1 || n.c >= COL ) ret = true; return; end
+if ( n.r < 1 || ROW < n.r ) ret = true; return; end
+if ( n.c < 1 || COL < n.c ) ret = true; return; end
 
 function ret = is_inside(n)
   ret = not(is_outside(n));
