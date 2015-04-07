@@ -1,5 +1,8 @@
 function jumppointsearch(input_map)
 clc; clear all; close all;
+% This will only run unit test then exit
+unit_test = true;
+
 
 global map; global ROW; global COL; global S; global G; global C; global O;
 global START; global GOAL;
@@ -11,10 +14,11 @@ NW   = 1;   NORTH  = 2;  NE    = 3;
 WEST = 4;   CENTER = 0;  EAST  = 6;
 SW   = 7;   SOUTH  = 8;  SE    = 9;
 
-% This will only run unit test then exit
-unit_test = true;
-
-create_map_symbols();
+% create map symbols
+S = 7;
+G = 8;
+C = 1;
+O = 0;
 
 if( nargin == 0 )
   map = use_canned_map(unit_test);
@@ -37,21 +41,10 @@ map_set_goal_pos;
 draw_map();
 
 if ( unit_test )
-  % TESTING
-  %neighbor_rc(1,1)
-  %neighbor_rc(2,2)
-  %neighbor_rc(3,3)
-  %neighbor_rc(4,4)
-  prune(neighbors(3,3));
-  
-  %a.r = 3; a.c = 3;
-  %b.r = 4; b.c = 4;
-  %display(['INFO: ' dir_string(direction(a,b))]);
   TEST_dir_east_west;
   TEST_dir_north_south
   TEST_step;
   TEST_is_forced_neighbor_exist
-  %TEST_jump;
   TEST_identify_successor;
   return;
 end
@@ -338,18 +331,6 @@ elseif ( dir == NORTH || dir == SOUTH )
     return;
   end
 end
-
-%--------------------------------------------------------------------------
-% function: create_map_symbols
-% param   :
-% return  : set global constants
-%--------------------------------------------------------------------------
-function create_map_symbols()
-global S; global G; global C; global O;
-S = 7;
-G = 8;
-C = 1;
-O = 0;
 
 %--------------------------------------------------------------------------
 % function: use_canned_map
