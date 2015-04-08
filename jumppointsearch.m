@@ -235,17 +235,17 @@ if ( is_dir_diagonal(dir) )
   % d1 and d2 represent the striaght moves
   d = [];
   if ( dir == NW )
-    d(1) = EAST;
-    d(2) = SOUTH;
-  elseif ( dir == NE )
-    d(1) = WEST;
-    d(2) = SOUTH;
-  elseif ( dir == SW )
-    d(1) = NORTH;
-    d(2) = EAST;
-  elseif ( dir == SE )
     d(1) = NORTH;
     d(2) = WEST;
+  elseif ( dir == NE )
+    d(1) = NORTH;
+    d(2) = EAST;
+  elseif ( dir == SW )
+    d(1) = SOUTH;
+    d(2) = WEST;
+  elseif ( dir == SE )
+    d(1) = SOUTH;
+    d(2) = EAST;
   end
   
   % run thru d1 and d2 straight moves
