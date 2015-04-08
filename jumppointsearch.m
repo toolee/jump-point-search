@@ -14,6 +14,8 @@ NW   = 1;   NORTH  = 2;  NE    = 3;
 WEST = 4;   CENTER = 0;  EAST  = 6;
 SW   = 7;   SOUTH  = 8;  SE    = 9;
 
+global INIT_G_VALUE; global INIT_F_VALUE;
+
 % create map symbols
 S = 7;
 G = 8;
@@ -46,7 +48,7 @@ if ( unit_test )
   TEST_step;
   TEST_is_forced_neighbor_exist
   TEST_identify_successor;
-  return;
+  %return;
 end
 
 % compute h values for all nodes, create nodes for the first time
@@ -60,9 +62,22 @@ cur_n = nodes(11);
 while not( is_same_node(cur_n,GOAL) )
   scr = identify_successor(cur_n);
   for i = 1:size(scr,2)
-    nodes = compute_g_value(scr(i),cur_n, nodes);
+    [nodes,indx] = update_f_g_value(scr(i),cur_n, nodes);
+    % add to open_list
+    open_list(oi) = indx;
+    oi = oi + 1;
   end
   nodes = draw_fgh_value(nodes);
+  % find smallest f value
+  minv = INIT_F_VALUE;
+  for i = 1:size(open_list,2)
+    open_list(i);
+    nodes(open_list(i));
+    if( nodes(open_list(i)).f < minv )
+      minv = nodes(open_list(i)).f;
+      sm_i = i;
+    end
+  end
 end
 
 % traverse the map
@@ -230,12 +245,12 @@ elseif ( dir == NORTH || dir == SOUTH )
 end
 
 %--------------------------------------------------------------------------
-% function: compute_g_value
+% function: update_f_g_value
 % param   : scr
 % param   : cur_n
 % return  :
 %--------------------------------------------------------------------------
-function nodes = compute_g_value(scr,cur_n,nodes)
+function [nodes,index] = update_f_g_value(scr,cur_n,nodes)
 global INIT_G_VALUE;
 index = rc2indx(scr.r,scr.c);
 if ( cur_n.g == INIT_G_VALUE )
@@ -243,6 +258,8 @@ if ( cur_n.g == INIT_G_VALUE )
 else
   nodes(index).g = cur_n.g + distance(cur_n, scr);
 end
+nodes(index).f = nodes(index).g + nodes(index).h;
+
 %--------------------------------------------------------------------------
 % function: distance
 %   Only for straight distance computation
