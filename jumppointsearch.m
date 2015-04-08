@@ -112,16 +112,20 @@ end
 x.r = 3; x.c = 3;
 successors =  identify_successor(x);
 if ( not( is_same_node( successors(1), struct('r',2,'c',3) ) ) )
-  display('TEST: FAILED: identify_successor 3');
+  display('TEST: FAILED: identify_successor 3.1');
 else
   display('TEST: PASSED: identify_successor 3');
 end
 if ( not( is_same_node( successors(2), struct('r',3,'c',2) ) ) )
-  display('TEST: FAILED: identify_successor');
+  display('TEST: FAILED: identify_successor 3.2');
 else
   display('TEST: PASSED: identify_successor 3');
 end
-
+if ( not( is_same_node( successors(3), struct('r',4,'c',4) ) ) )
+  display('TEST: FAILED: identify_successor 3.3');
+else
+  display('TEST: PASSED: identify_successor 3');
+end
 %--------------------------------------------------------------------------
 % function: neighbor_start_end_index
 % param   : r current row
