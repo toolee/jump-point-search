@@ -221,6 +221,129 @@ elseif ( dir == NORTH || dir == SOUTH )
 end
 
 %--------------------------------------------------------------------------
+% function: compute_g_value
+% param   : scr
+% param   : cur_n
+% return  :
+%--------------------------------------------------------------------------
+function nodes = compute_g_value(scr,cur_n,nodes)
+global INIT_G_VALUE;
+index = rc2indx(scr.r,scr.c);
+if ( cur_n.g == INIT_G_VALUE )
+  nodes(index).g = distance(cur_n, scr);
+else
+  nodes(index).g = cur_n.g + distance(cur_n, scr);
+end
+%--------------------------------------------------------------------------
+% function: distance
+%   Only for straight distance computation
+% param   : x - a node
+% param   : y - another node
+% return  : distance in integer
+%--------------------------------------------------------------------------  
+function d = distance(x,y)
+% if ( is_dir_diagonal( direction(x,y) ) )
+%   display('ERROR: distance(): should not be computing diagonal distance');
+% end
+
+d = sqrt(abs(x.r-y.r)^2 + abs(x.c-y.c)^2 );
+
+
+%--------------------------------------------------------------------------
+% function: rc2indx
+% param   : r current row
+% param   : c current col
+% return  : index to nodes vector
+%--------------------------------------------------------------------------
+function index = rc2indx(r,c)
+global COL;
+index = (r-1)*COL+c;
+
+%--------------------------------------------------------------------------
+% function: indx2rc
+% param   : i - index to nodes vector
+% return  : r,c
+%--------------------------------------------------------------------------
+function [r,c] = indx2rc(i)
+global COL;
+r = ceil(i/COL);
+c = mod(i,COL);
+if( c == 0 )
+  c = COL;
+end
+
+%--------------------------------------------------------------------------
+% function: neighbor_start_end_index
+% param   : r current row
+% param   : c current col
+% return  : r (s)tart/(e)nd, c (s)tart/(e)nd
+%--------------------------------------------------------------------------
+function [rs,re,cs,ce] = neighbor_start_end_index(r,c)
+global map; global ROW; global COL; global S; global G; global C; global O;
+%    r-1
+% c-1   c+1
+%    r+1
+if( r-1 > 0   ) rs = r-1; else rs = 1;   end
+if( r+1 < ROW ) re = r+1; else re = ROW; end
+if( c-1 > 0   ) cs = c-1; else cs = 1;   end
+if( c+1 < COL ) ce = c+1; else ce = COL; end
+
+%--------------------------------------------------------------------------
+% function: neighbors
+% param   : r current row
+% param   : c current col
+% return  : all neighbor including obstacles
+%--------------------------------------------------------------------------
+function n = neighbors(r,c)
+global map; global ROW; global COL; global S; global G; global C; global O;
+
+[rs,re,cs,ce] = neighbor_start_end_index(r,c);
+
+i = 1;
+
+for ri = rs:re
+  for ci = cs:ce
+    if( ri == r && ci == c )
+    else
+      n(i).r = ri;
+      n(i).c = ci;
+      i = i+1;
+    end
+  end
+end
+
+%--------------------------------------------------------------------------
+% function: prune
+% param   : n all neighbors
+% return  : pruned neighbors (no obstacle)
+%--------------------------------------------------------------------------
+function ret_n = prune(n)
+global map; global ROW; global COL; global S; global G; global C; global O;
+
+ii = 1;
+for i = 1:size(n,2)
+  if ( map( n(i).r, n(i).c ) ~= O )
+    nn(ii).r = n(i).r;
+    nn(ii).c = n(i).c;
+    ii = ii+1;
+  end
+end
+
+ret_n = nn;
+
+%--------------------------------------------------------------------------
+% function: is_same_node
+%   compare r,c value only
+% param   : x,y
+% return  : true or false
+%--------------------------------------------------------------------------
+function ret = is_same_node(x,y)
+ret = false;
+if ( x.r == y.r && x.c == y.c )
+  ret = true;
+end
+
+%--------------------------------------------------------------------------
 % function: use_canned_map
 % param   :
 % return  : canned map
