@@ -55,6 +55,15 @@ nodes = astar_compute_h;
 nodes = draw_fgh_value(nodes);
 
 keep_running = false;
+cur_n = nodes(11);
+
+while not( is_same_node(cur_n,GOAL) )
+  scr = identify_successor(cur_n);
+  for i = 1:size(scr,2)
+    nodes = compute_g_value(scr(i),cur_n, nodes);
+  end
+  nodes = draw_fgh_value(nodes);
+end
 
 % traverse the map
 
