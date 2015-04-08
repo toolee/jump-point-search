@@ -75,125 +75,6 @@ for i = 1:size(the_nb,2)
   end
 end
 
-function TEST_identify_successor
-global map; global ROW; global COL; global S; global G; global C; global O;
-global START; global GOAL;
-
-% setup direction constants
-global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
-global NW; global NE; global SW; global SE;
-
-x.r = 4; x.c = 1;
-successors =  identify_successor(x);
-if ( not( is_same_node( successors(1), struct('r',2,'c',1) ) ) )
-  display('TEST: FAILED: identify_successor 2');
-else
-  display('TEST: PASSED: identify_successor 2');
-end
-if ( not( is_same_node( successors(2), struct('r',3,'c',2) ) ) )
-  display('TEST: FAILED: identify_successor 2');
-else
-  display('TEST: PASSED: identify_successor 2');
-end
-if ( not( is_same_node( successors(3), struct('r',4,'c',4) ) ) )
-  display('TEST: FAILED: identify_successor 2');
-else
-  display('TEST: PASSED: identify_successor 2');
-end
-
-x.r = 1; x.c = 1;
-successors = identify_successor(x);
-if ( not( is_same_node( successors(1), struct('r',1,'c',2) ) ) )
-  display('TEST: FAILED: identify_successor 1');
-else
-  display('TEST: PASSED: identify_successor 1');
-end
-
-x.r = 3; x.c = 3;
-successors =  identify_successor(x);
-if ( not( is_same_node( successors(1), struct('r',2,'c',3) ) ) )
-  display('TEST: FAILED: identify_successor 3.1');
-else
-  display('TEST: PASSED: identify_successor 3');
-end
-if ( not( is_same_node( successors(2), struct('r',3,'c',2) ) ) )
-  display('TEST: FAILED: identify_successor 3.2');
-else
-  display('TEST: PASSED: identify_successor 3');
-end
-if ( not( is_same_node( successors(3), struct('r',4,'c',4) ) ) )
-  display('TEST: FAILED: identify_successor 3.3');
-else
-  display('TEST: PASSED: identify_successor 3');
-end
-%--------------------------------------------------------------------------
-% function: neighbor_start_end_index
-% param   : r current row
-% param   : c current col
-% return  : r (s)tart/(e)nd, c (s)tart/(e)nd
-%--------------------------------------------------------------------------
-function [rs,re,cs,ce] = neighbor_start_end_index(r,c)
-global map; global ROW; global COL; global S; global G; global C; global O;
-%    r-1
-% c-1   c+1
-%    r+1
-if( r-1 > 0   ) rs = r-1; else rs = 1;   end
-if( r+1 < ROW ) re = r+1; else re = ROW; end
-if( c-1 > 0   ) cs = c-1; else cs = 1;   end
-if( c+1 < COL ) ce = c+1; else ce = COL; end
-
-%display(sprintf('DEBUG: neighbors(): %d,%d - %d,%d,%d,%d',r,c,rs,re,cs,ce));
-
-%--------------------------------------------------------------------------
-% function: neighbors
-% param   : r current row
-% param   : c current col
-% return  : all neighbor including obstacles
-%--------------------------------------------------------------------------
-function n = neighbors(r,c)
-global map; global ROW; global COL; global S; global G; global C; global O;
-
-[rs,re,cs,ce] = neighbor_start_end_index(r,c);
-
-i = 1;
-
-for ri = rs:re
-  for ci = cs:ce
-    if( ri == r && ci == c )
-    else
-      n(i).r = ri;
-      n(i).c = ci;
-      i = i+1;
-    end
-  end
-end
-
-%--------------------------------------------------------------------------
-% function: prune
-% param   : n all neighbors
-% return  : pruned neighbors (no obstacle)
-%--------------------------------------------------------------------------
-function ret_n = prune(n)
-global map; global ROW; global COL; global S; global G; global C; global O;
-
-ii = 1;
-for i = 1:size(n,2)
-  if ( map( n(i).r, n(i).c ) ~= O )
-    nn(ii).r = n(i).r;
-    nn(ii).c = n(i).c;
-    ii = ii+1;
-  end
-end
-
-ret_n = nn;
-
-function ret = is_same_node(x,y)
-ret = false;
-if ( x.r == y.r && x.c == y.c )
-  ret = true;
-end
-
-%--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 % function: jump
 % param   : x initial node
@@ -202,7 +83,6 @@ end
 % param   : g goal node
 % return  : ret_n jump point - null - no jump point
 %                            - non-null - actual jump point
-%--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 function ret_n = jump(x,dir)
 global map; global ROW; global COL; global S; global G; global C; global O;
@@ -265,12 +145,6 @@ end
 
 % recurse with node n
 ret_n = jump(n,dir);
-
-function TEST_jump
-global map; global ROW; global COL; global S; global G; global C; global O;
-global START; global GOAL;
-global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
-global NW; global NE; global SW; global SE;
 
 %--------------------------------------------------------------------------
 % function: is_forced_neighbor_exist
@@ -449,6 +323,11 @@ global START; global GOAL;
 ret = false;
 if ( map(n.r, n.c) == O ) ret = true; return; end
 
+%--------------------------------------------------------------------------
+% function: is_not_obstacle
+% param   :
+% return  : true or false
+%--------------------------------------------------------------------------
 function ret = is_not_obstacle(n)
   ret = not(is_obstacle(n));
   
@@ -463,9 +342,19 @@ ret = false;
 if ( n.r < 1 || ROW < n.r ) ret = true; return; end
 if ( n.c < 1 || COL < n.c ) ret = true; return; end
 
+%--------------------------------------------------------------------------
+% function: is_inside
+% param   :
+% return  : true or false
+%--------------------------------------------------------------------------
 function ret = is_inside(n)
   ret = not(is_outside(n));
 
+%--------------------------------------------------------------------------
+% function: make_node_struct
+% param   : r,c
+% return  : node structure with r,c populated
+%--------------------------------------------------------------------------
 function n = make_node_struct(r,c)
   n.r = r; n.c = c;
   
@@ -496,6 +385,11 @@ for ri = 1:ROW
   end
 end
 
+%--------------------------------------------------------------------------
+% function: is_dir_diagonal
+% param   : dir
+% return  : true or false
+%--------------------------------------------------------------------------
 function ret = is_dir_diagonal(dir)
 global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
 global NW; global NE; global SW; global SE;
@@ -653,6 +547,12 @@ switch dir
     n.c = -1;
 end
 
+%--------------------------------------------------------------------------
+% function: draw_fgh_value
+%   draw f, g, and h value on map
+% param   : nodes - all the node structure
+% return  : nodes - with some handler added or updated
+%--------------------------------------------------------------------------
 function nodes = draw_fgh_value(nodes)
 global map; global ROW; global COL; global S; global G; global C; global O;
 global START; global GOAL;
@@ -712,6 +612,11 @@ for ni = 1:size(nodes,2)
     end
 end
 
+%--------------------------------------------------------------------------
+% function: astar_compute_h
+%   Compute the initial h value
+% return  : nodes - with h value populated, f and g values are initialized
+%--------------------------------------------------------------------------
 function nodes = astar_compute_h
 global map; global ROW; global COL; global S; global G; global C; global O;
 global START; global GOAL;
@@ -749,6 +654,10 @@ for r = 1:ROW
   end
 end
 
+%--------------------------------------------------------------------------
+% function: map_set_goal_pos
+%   Set GOAL node
+%--------------------------------------------------------------------------
 function map_set_goal_pos
 global map; global ROW; global COL; global S; global G; global C; global O;
 global START; global GOAL;
@@ -756,6 +665,10 @@ global START; global GOAL;
 GOAL.r = r;
 GOAL.c = c;
 
+%--------------------------------------------------------------------------
+% function: map_set_start_pos
+%   Set START node
+%--------------------------------------------------------------------------
 function map_set_start_pos
 global map; global ROW; global COL; global S; global G; global C; global O;
 global START; global GOAL;
@@ -903,7 +816,63 @@ else
   display('TEST: PASSED: is_forced_neighbor_exist()');
 end
 
+function TEST_jump
+global map; global ROW; global COL; global S; global G; global C; global O;
+global START; global GOAL;
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
+global NW; global NE; global SW; global SE;
 
+function TEST_identify_successor
+global map; global ROW; global COL; global S; global G; global C; global O;
+global START; global GOAL;
+
+% setup direction constants
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
+global NW; global NE; global SW; global SE;
+
+x.r = 4; x.c = 1;
+successors =  identify_successor(x);
+if ( not( is_same_node( successors(1), struct('r',2,'c',1) ) ) )
+  display('TEST: FAILED: identify_successor 2');
+else
+  display('TEST: PASSED: identify_successor 2');
+end
+if ( not( is_same_node( successors(2), struct('r',3,'c',2) ) ) )
+  display('TEST: FAILED: identify_successor 2');
+else
+  display('TEST: PASSED: identify_successor 2');
+end
+if ( not( is_same_node( successors(3), struct('r',4,'c',4) ) ) )
+  display('TEST: FAILED: identify_successor 2');
+else
+  display('TEST: PASSED: identify_successor 2');
+end
+
+x.r = 1; x.c = 1;
+successors = identify_successor(x);
+if ( not( is_same_node( successors(1), struct('r',1,'c',2) ) ) )
+  display('TEST: FAILED: identify_successor 1');
+else
+  display('TEST: PASSED: identify_successor 1');
+end
+
+x.r = 3; x.c = 3;
+successors =  identify_successor(x);
+if ( not( is_same_node( successors(1), struct('r',2,'c',3) ) ) )
+  display('TEST: FAILED: identify_successor 3.1');
+else
+  display('TEST: PASSED: identify_successor 3');
+end
+if ( not( is_same_node( successors(2), struct('r',3,'c',2) ) ) )
+  display('TEST: FAILED: identify_successor 3.2');
+else
+  display('TEST: PASSED: identify_successor 3');
+end
+if ( not( is_same_node( successors(3), struct('r',4,'c',4) ) ) )
+  display('TEST: FAILED: identify_successor 3.3');
+else
+  display('TEST: PASSED: identify_successor 3');
+end
 
 
 
