@@ -62,15 +62,23 @@ cur_n = nodes(start_index);
 oi = 1;
 
 while not( is_same_node(cur_n,GOAL) )
+  cur_n_hdlr = plot(cur_n.c + 0.2,cur_n.r + 0.2,'r*');
   scr = identify_successor(cur_n);
   for i = 1:size(scr,2)
+    scr(i)
+    scr(i).hldr = plot(scr(i).c + 0.1, scr(i).r + 0.1, 'b*');
     [nodes,indx] = update_f_g_value(scr(i),cur_n, nodes);
     % add to open_list
     open_list(oi) = indx;
     oi = oi + 1;
   end
   nodes = draw_fgh_value(nodes);
-  cur_n = nodes( open_list(oi - 1) );
+  
+  delete (cur_n_hdlr);
+  for i = 1:size(scr,2)
+    delete(scr(i).hldr);
+  end
+  
   % pop open_list
   oi = oi - 1;
   pop_index = open_list(oi);
@@ -282,6 +290,7 @@ end
 nodes(index).f = nodes(index).g + nodes(index).h;
 nodes(index).parent_r = cur_n.r;
 nodes(index).parent_c = cur_n.c;
+nodes(index)
 
 %--------------------------------------------------------------------------
 % function: distance
