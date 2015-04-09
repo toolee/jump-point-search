@@ -71,7 +71,11 @@ while not( is_same_node(cur_n,GOAL) )
   end
   nodes = draw_fgh_value(nodes);
   cur_n = nodes( open_list(oi - 1) );
+  % pop open_list
   oi = oi - 1;
+  pop_index = open_list(oi);
+  open_list(oi) = [];
+  cur_n = nodes( pop_index );
 end
 
 % traverse the map
