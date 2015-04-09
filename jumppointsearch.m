@@ -75,6 +75,29 @@ while not( is_same_node(cur_n,GOAL) )
 end
 
 % traverse the map
+% traverse back
+ti = rc2indx(GOAL.r,GOAL.c);
+parent_n = make_node_struct(nodes(ti).parent_r,nodes(ti).parent_c);
+if( is_outside(parent_n) )
+    display('no path');
+    return;
+end
+
+while (nodes(ti).r ~= START.r || nodes(ti).c ~= START.c)
+    if( nodes(ti).c > nodes(ti).parent_c )
+        xx = [nodes(ti).parent_c+0.5 nodes(ti).c+0.5];
+    else
+        xx = [nodes(ti).c+0.5 nodes(ti).parent_c+0.5];
+    end
+    if( nodes(ti).r > nodes(ti).parent_r )
+        yy = [nodes(ti).parent_r+0.5 nodes(ti).r+0.5];
+    else
+        yy = [nodes(ti).r+0.5 nodes(ti).parent_r+0.5];
+    end
+    plot(xx,yy);
+    ti = rc2indx(nodes(ti).parent_r,nodes(ti).parent_c);
+    pause(0.5);
+end
 
 %--------------------------------------------------------------------------
 % function: identify successor
