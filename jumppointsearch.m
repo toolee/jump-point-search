@@ -489,7 +489,7 @@ if ( n.c < 1 || COL < n.c ) ret = true; return; end
 
 %--------------------------------------------------------------------------
 % function: is_inside
-% param   :
+% param   : n - a node
 % return  : true or false
 %--------------------------------------------------------------------------
 function ret = is_inside(n)
@@ -738,21 +738,28 @@ for ni = 1:size(nodes,2)
         %----------------------------
         % draw arrow
         update_arrow = false;
-        if( 0 < nodes(ni).r+1 && nodes(ni).r+1 == nodes(ni).parent_r && nodes(ni).r+1 < ROW )
-            s = 'v'; update_arrow = true;
-        elseif( 0 < nodes(ni).r-1 && nodes(ni).r-1 == nodes(ni).parent_r && nodes(ni).r-1 < ROW )
-            s = '\^'; update_arrow = true;
-        elseif( 0 < nodes(ni).c+1 && nodes(ni).c+1 == nodes(ni).parent_c && nodes(ni).c+1 < COL )
-            s = '>'; update_arrow = true;
-        elseif( 0 < nodes(ni).c-1 && nodes(ni).c-1 == nodes(ni).parent_c && nodes(ni).c-1 < COL )
-            s = '<'; update_arrow = true;
-        end
-        if( update_arrow )
+        parent_n = make_node_struct(nodes(ni).parent_r,nodes(ni).parent_c);
+        if ( is_inside(parent_n) )
+          dir = direction(nodes(ni),parent_n);
+          s = dir_string(dir);
+          update_arrow = true;
+          
+%           if( 0 < nodes(ni).r+1 && nodes(ni).r+1 == nodes(ni).parent_r && nodes(ni).r+1 < ROW )
+%             s = 'v'; update_arrow = true;
+%           elseif( 0 < nodes(ni).r-1 && nodes(ni).r-1 == nodes(ni).parent_r && nodes(ni).r-1 < ROW )
+%             s = '\^'; update_arrow = true;
+%           elseif( 0 < nodes(ni).c+1 && nodes(ni).c+1 == nodes(ni).parent_c && nodes(ni).c+1 < COL )
+%             s = '>'; update_arrow = true;
+%           elseif( 0 < nodes(ni).c-1 && nodes(ni).c-1 == nodes(ni).parent_c && nodes(ni).c-1 < COL )
+%             s = '<'; update_arrow = true;
+%           end
+          if( update_arrow )
             if( nodes(ni).arrow_hldr == 0 )
-                nodes(ni).arrow_hldr = text(nodes(ni).c+0.05,nodes(ni).r+0.1,s);
+              nodes(ni).arrow_hldr = text(nodes(ni).c+0.05,nodes(ni).r+0.1,s);
             else
-                set(nodes(ni).arrow_hldr,'String',s);
+              set(nodes(ni).arrow_hldr,'String',s);
             end
+          end
         end
     end
 end
