@@ -57,7 +57,9 @@ nodes = astar_compute_h;
 nodes = draw_fgh_value(nodes);
 
 keep_running = false;
-cur_n = nodes(11);
+start_index = rc2indx(START.r,START.c);
+cur_n = nodes(start_index);
+oi = 1;
 
 while not( is_same_node(cur_n,GOAL) )
   scr = identify_successor(cur_n);
@@ -68,16 +70,8 @@ while not( is_same_node(cur_n,GOAL) )
     oi = oi + 1;
   end
   nodes = draw_fgh_value(nodes);
-  % find smallest f value
-  minv = INIT_F_VALUE;
-  for i = 1:size(open_list,2)
-    open_list(i);
-    nodes(open_list(i));
-    if( nodes(open_list(i)).f < minv )
-      minv = nodes(open_list(i)).f;
-      sm_i = i;
-    end
-  end
+  cur_n = nodes( open_list(oi - 1) );
+  oi = oi - 1;
 end
 
 % traverse the map
