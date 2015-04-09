@@ -185,8 +185,8 @@ end
 %--------------------------------------
 % diagonal move
 if ( dir == NW )
-  n1 = make_node_struct( n.r, n.c - 1 );
-  n2 = make_node_struct( n.r - 1, n.c );
+  n1 = make_node_struct( n.r, n.c + 1 );
+  n2 = make_node_struct( n.r + 1, n.c );
   if ( is_inside(n1) && is_obstacle(n1) || is_inside(n2) && is_obstacle(n2) )
     ret = true;
     return;
@@ -194,15 +194,6 @@ if ( dir == NW )
 end
 
 if ( dir == NE )
-  n1 = make_node_struct( n.r, n.c + 1 );
-  n2 = make_node_struct( n.r - 1, n.c );
-  if ( is_inside(n1) && is_obstacle(n1) || is_inside(n2) && is_obstacle(n2) )
-    ret = true;
-    return;
-  end
-end
-
-if ( dir == SW )
   n1 = make_node_struct( n.r, n.c - 1 );
   n2 = make_node_struct( n.r + 1, n.c );
   if ( is_inside(n1) && is_obstacle(n1) || is_inside(n2) && is_obstacle(n2) )
@@ -211,9 +202,18 @@ if ( dir == SW )
   end
 end
 
-if ( dir == SE )
+if ( dir == SW )
   n1 = make_node_struct( n.r, n.c + 1 );
-  n2 = make_node_struct( n.r + 1, n.c );
+  n2 = make_node_struct( n.r - 1, n.c );
+  if ( is_inside(n1) && is_obstacle(n1) || is_inside(n2) && is_obstacle(n2) )
+    ret = true;
+    return;
+  end
+end
+
+if ( dir == SE )
+  n1 = make_node_struct( n.r, n.c - 1 );
+  n2 = make_node_struct( n.r - 1, n.c );
   if ( is_inside(n1) && is_obstacle(n1) || is_inside(n2) && is_obstacle(n2) )
     ret = true;
     return;
@@ -946,21 +946,65 @@ if ( is_forced_neighbor_exist(n,SOUTH) == false )
   display('TEST: FAILED: is_forced_neighbor_exist(): SOUTH 2');
 end
 
-n.r = 2; n.c = 1;
+% n.r = 2; n.c = 1;
+% if ( is_forced_neighbor_exist(n,NE) == false )
+%   display('TEST: FAILED: is_forced_neighbor_exist(): NE');
+% end
+% if ( is_forced_neighbor_exist(n,SE) == false )
+%   display('TEST: FAILED: is_forced_neighbor_exist(): SE');
+% end
+% 
+% n.r = 2; n.c = 3;
+% if ( is_forced_neighbor_exist(n,NW) == false )
+%   display('TEST: FAILED: is_forced_neighbor_exist(): NW');
+% end
+% if ( is_forced_neighbor_exist(n,SW) == false )
+%   display('TEST: FAILED: is_forced_neighbor_exist(): SW');
+% end
+
+% f - forced neighbor O - obstacle p - parent x - current node
+%   1  2  3  4
+% 1    f  
+% 2    O  x
+% 3    p  O  f
+% 4
+n.r = 2; n.c = 3;
 if ( is_forced_neighbor_exist(n,NE) == false )
   display('TEST: FAILED: is_forced_neighbor_exist(): NE');
 end
+
+% f - forced neighbor O - obstacle p - parent x - current node
+%   1  2  3  4
+% 1    p  O  f
+% 2    O  x
+% 3    f
+% 4
+n.r = 2; n.c = 3;
 if ( is_forced_neighbor_exist(n,SE) == false )
   display('TEST: FAILED: is_forced_neighbor_exist(): SE');
 end
 
-n.r = 2; n.c = 3;
+% f - forced neighbor O - obstacle p - parent x - current node
+%   1  2  3  4
+% 1    f
+% 2 x  O
+% 3 O  p
+% 4
+n.r = 2; n.c = 1;
 if ( is_forced_neighbor_exist(n,NW) == false )
   display('TEST: FAILED: is_forced_neighbor_exist(): NW');
 end
+
+% f - forced neighbor O - obstacle p - parent x - current node
+%   1  2  3  4
+% 1 O  p
+% 2 x  O
+% 3    f
+% 4
 if ( is_forced_neighbor_exist(n,SW) == false )
   display('TEST: FAILED: is_forced_neighbor_exist(): SW');
 end
+
 
 if ( status == 0 )
   display('TEST: FAILED: is_forced_neighbor_exist()');
