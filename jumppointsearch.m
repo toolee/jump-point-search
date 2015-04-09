@@ -632,15 +632,15 @@ global NW; global NE; global SW; global SE;
 
 switch dir
   case 0
-    str = sprintf('CENTER');
+    str = sprintf('C');
   case NORTH
-    str = sprintf('NORTH');
+    str = sprintf('N');
   case EAST
-    str = sprintf('EAST');
+    str = sprintf('E');
   case SOUTH
-    str = sprintf('SOUTH');
+    str = sprintf('S');
   case WEST
-    str = sprintf('WEST');
+    str = sprintf('W');
   case NW
     str = sprintf('NW');
   case NE
