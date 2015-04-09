@@ -253,6 +253,8 @@ else
   nodes(index).g = cur_n.g + distance(cur_n, scr);
 end
 nodes(index).f = nodes(index).g + nodes(index).h;
+nodes(index).parent_r = cur_n.r;
+nodes(index).parent_c = cur_n.c;
 
 %--------------------------------------------------------------------------
 % function: distance
