@@ -60,13 +60,14 @@ nodes = draw_fgh_value(nodes);
 keep_running = false;
 start_index = rc2indx(START.r,START.c);
 cur_n = nodes(start_index);
+dir = CENTER;
 oi = 1;
 
 while not( is_same_node(cur_n,GOAL) )
   cur_n_hdlr = plot(cur_n.c + 0.2,cur_n.r + 0.2,'r*');
-  scr = identify_successor(cur_n);
+  scr = identify_successor(cur_n,dir);
   for i = 1:size(scr,2)
-    scr(i)
+    %scr(i)
     scr(i).hldr = plot(scr(i).c + 0.1, scr(i).r + 0.1, 'b*');
     [nodes,indx] = update_f_g_value(scr(i),cur_n, nodes);
     % add to open_list
@@ -117,9 +118,14 @@ end
 % param   : x - current node
 % return  : successors
 %--------------------------------------------------------------------------
-function successors = identify_successor(x)
+function successors = identify_successor(x,dir)
+global CENTER
 si = 1;
-the_nb = prune(neighbors(x.r,x.c));
+if ( dir == CENTER )
+  the_nb = prune(neighbors(x.r,x.c));
+else
+  the_nb = prune2(x,dir);
+end
 for i = 1:size(the_nb,2)
   the_dir = direction(x,the_nb(i));
   n = jump(x,the_dir);
@@ -1270,7 +1276,7 @@ global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
 global NW; global NE; global SW; global SE;
 
 x.r = 4; x.c = 1;
-successors =  identify_successor(x);
+successors =  identify_successor(x,CENTER);
 if ( not( is_same_node( successors(1), struct('r',2,'c',1) ) ) )
   display('TEST: FAILED: identify_successor 2');
 else
@@ -1288,7 +1294,7 @@ else
 end
 
 x.r = 1; x.c = 1;
-successors = identify_successor(x);
+successors = identify_successor(x,CENTER);
 if ( not( is_same_node( successors(1), struct('r',1,'c',2) ) ) )
   display('TEST: FAILED: identify_successor 1');
 else
@@ -1296,7 +1302,7 @@ else
 end
 
 x.r = 3; x.c = 3;
-successors =  identify_successor(x);
+successors =  identify_successor(x,CENTER);
 if ( not( is_same_node( successors(1), struct('r',2,'c',3) ) ) )
   display('TEST: FAILED: identify_successor 3.1');
 else
