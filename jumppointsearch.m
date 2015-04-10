@@ -48,6 +48,7 @@ if ( unit_test )
   TEST_step;
   TEST_is_forced_neighbor_exist
   TEST_identify_successor;
+  TEST_prune2
   %return;
 end
 
