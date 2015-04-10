@@ -83,8 +83,24 @@ while not( is_same_node(cur_n,GOAL) )
   
   % pop open_list
   oi = oi - 1;
-  pop_index = open_list(oi);
-  open_list(oi) = [];
+  %pop_index = open_list(oi);
+  
+  % find smallest f value
+  minv = 999999;
+  for i = 1:size(open_list,2)
+    open_list(i);
+    nodes(open_list(i));
+    if( nodes(open_list(i)).f < minv )
+      minv = nodes(open_list(i)).f;
+      pop_index = open_list(i);
+      sm_i = i;
+    end
+  end
+  
+  
+  open_list(sm_i) = [];
+  parent_n = make_node_struct(nodes(pop_index).parent_r,nodes(pop_index).parent_c);
+  dir = direction(parent_n, nodes(pop_index));
   cur_n = nodes( pop_index );
 end
 
