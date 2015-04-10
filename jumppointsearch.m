@@ -389,6 +389,212 @@ end
 
 ret_n = nn;
 
+function ret_n = prune2(n,dir)
+global map; global ROW; global COL; global S; global G; global C; global O;
+global START; global GOAL;
+
+% setup direction constants
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
+global NW; global NE; global SW; global SE;
+NW   = 1;   NORTH  = 2;  NE    = 3;
+WEST = 4;   CENTER = 0;  EAST  = 6;
+SW   = 7;   SOUTH  = 8;  SE    = 9;
+
+n1 = make_node_struct( n.r-1, n.c-1 );
+n2 = make_node_struct( n.r-1, n.c );
+n3 = make_node_struct( n.r-1, n.c+1 );
+
+n4 = make_node_struct( n.r, n.c-1 );
+n6 = make_node_struct( n.r, n.c+1 );
+
+n7 = make_node_struct( n.r+1, n.c-1 );
+n8 = make_node_struct( n.r+1, n.c );
+n9 = make_node_struct( n.r+1, n.c+1 );
+
+ret_n = struct('r',[],'c',[]);
+i = 1;
+%----------------------------
+if ( dir == EAST )
+  % hit obstacle
+  if ( is_outside(n6) || is_obstacle(n6) )
+    % no negihbors
+    ret_n = [];
+    return;
+  end
+  
+  ret_n(i) = n6; i = i+1;
+  
+  % if n2 is an obstacle, then n3 is a forced neighbor
+  if ( is_inside(n2) && is_obstacle(n2) )
+    ret_n(i) = n3;
+    i = i+1;
+  end
+  
+  if ( is_inside(n8) && is_obstacle(n8) )
+    ret_n(i) = n9;
+    i = i+1;
+  end
+  return;
+end
+%----------------------------
+if ( dir == WEST )
+  % hit obstacle
+  if ( is_outside(n4) || is_obstacle(n4) )
+    % no negihbors
+    ret_n = [];
+    return;
+  end
+  
+  ret_n(i) = n4; i = i+1;
+  
+  % if n2 is an obstacle, then n1 is a forced neighbor
+  if ( is_inside(n2) && is_obstacle(n2) )
+    ret_n(i) = n1;
+    i = i+1;
+  end
+  
+  % if n8 is an obstacle, then n7 is a forced neighbor
+  if ( is_inside(n8) && is_obstacle(n8) )
+    ret_n(i) = n7;
+    i = i+1;
+  end
+  return;
+end
+%----------------------------
+if ( dir == NORTH )
+  % hit obstacle
+  if ( is_outside(n2) || is_obstacle(n2) )
+    % no negihbors
+    ret_n = [];
+    return;
+  end
+  
+  ret_n(i) = n2; i = i+1;
+
+  if ( is_inside(n4) && is_obstacle(n4) )
+    ret_n(i) = n1;
+    i = i+1;
+  end
+
+  if ( is_inside(n6) && is_obstacle(n6) )
+    ret_n(i) = n3;
+    i = i+1;
+  end
+  return;
+end
+%----------------------------
+if ( dir == SOUTH )
+  % hit obstacle
+  if ( is_outside(n8) || is_obstacle(n8) )
+    % no negihbors
+    ret_n = [];
+    return;
+  end
+  
+  ret_n(i) = n8; i = i+1;
+
+  if ( is_inside(n4) && is_obstacle(n4) )
+    ret_n(i) = n7;
+    i = i+1;
+  end
+
+  if ( is_inside(n6) && is_obstacle(n6) )
+    ret_n(i) = n9;
+    i = i+1;
+  end
+  return;
+end
+%----------------------------
+if ( dir == NE )
+  if ( is_inside(n2) && is_not_obstacle(n2) )
+    ret_n(i) = n2; i = i + 1;
+  end
+  if ( is_inside(n3) && is_not_obstacle(n3) )
+    ret_n(i) = n3; i = i + 1;
+  end
+  if ( is_inside(n6) && is_not_obstacle(n6) )
+    ret_n(i) = n6; i = i + 1;
+  end
+  
+  if ( is_inside(n4) && is_obstacle(n4) )
+    ret_n(i) = n1; i = i + 1;
+  end
+  
+  if ( is_inside(n8) && is_obstacle(n8) )
+    ret_n(i) = n9; i = i + 1;
+  end
+  
+  return;
+end
+%----------------------------
+if ( dir == NW )
+  if ( is_inside(n1) && is_not_obstacle(n1) )
+    ret_n(i) = n1; i = i + 1;
+  end
+  if ( is_inside(n2) && is_not_obstacle(n2) )
+    ret_n(i) = n2; i = i + 1;
+  end
+  if ( is_inside(n4) && is_not_obstacle(n4) )
+    ret_n(i) = n4; i = i + 1;
+  end
+  
+  if ( is_inside(n6) && is_obstacle(n6) )
+    ret_n(i) = n3; i = i + 1;
+  end
+  
+  if ( is_inside(n8) && is_obstacle(n8) )
+    ret_n(i) = n7; i = i + 1;
+  end
+  
+  return;
+end
+
+%----------------------------
+if ( dir == SW )
+  if ( is_inside(n4) && is_not_obstacle(n4) )
+    ret_n(i) = n4; i = i + 1;
+  end
+  if ( is_inside(n7) && is_not_obstacle(n7) )
+    ret_n(i) = n7; i = i + 1;
+  end
+  if ( is_inside(n8) && is_not_obstacle(n8) )
+    ret_n(i) = n8; i = i + 1;
+  end
+  
+  if ( is_inside(n2) && is_obstacle(n2) )
+    ret_n(i) = n1; i = i + 1;
+  end
+  
+  if ( is_inside(n6) && is_obstacle(n6) )
+    ret_n(i) = n9; i = i + 1;
+  end
+  
+  return;
+end
+
+%----------------------------
+if ( dir == SE )
+  if ( is_inside(n6) && is_not_obstacle(n6) )
+    ret_n(i) = n6; i = i + 1;
+  end
+  if ( is_inside(n8) && is_not_obstacle(n8) )
+    ret_n(i) = n8; i = i + 1;
+  end
+  if ( is_inside(n9) && is_not_obstacle(n9) )
+    ret_n(i) = n9; i = i + 1;
+  end
+  
+  if ( is_inside(n2) && is_obstacle(n2) )
+    ret_n(i) = n3; i = i + 1;
+  end
+  
+  if ( is_inside(n4) && is_obstacle(n4) )
+    ret_n(i) = n7; i = i + 1;
+  end
+  
+  return;
+end
+
 %--------------------------------------------------------------------------
 % function: is_same_node
 %   compare r,c value only
@@ -1106,5 +1312,180 @@ else
   display('TEST: PASSED: identify_successor 3');
 end
 
+function TEST_prune2
+global map; global ROW; global COL; global S; global G; global C; global O;
+global START; global GOAL;
 
+% setup direction constants
+global NORTH; global EAST; global SOUTH; global WEST; global CENTER;
+global NW; global NE; global SW; global SE;
 
+%---------------------------------------------
+n.r = 2; n.c = 1;
+ret_n = prune2(n,EAST);
+if ( isempty(ret_n) )
+  display('TEST: PASSED: prune2(): E1');
+else
+  display('TEST: FAILED: prune2(): E1');
+end
+
+n.r = 3; n.c = 1;
+ret_n = prune2(n,EAST);
+if ( ret_n.r == 3 && ret_n.c == 2 )
+  display('TEST: PASSED: prune2(): E2');
+else
+  display('TEST: FAILED: prune2(): E2');
+end
+
+n.r = 1; n.c = 2;
+ret_n = prune2(n,EAST);
+if ( ret_n(1).r == 1 && ret_n(1).c == 3 )
+  display('TEST: PASSED: prune2(): E3');
+else
+  display('TEST: FAILED: prune2(): E3');
+end
+if ( ret_n(2).r == 2 && ret_n(2).c == 3 )
+  display('TEST: PASSED: prune2(): E3');
+else
+  display('TEST: FAILED: prune2(): E3');
+end
+
+n.r = 4; n.c = 2;
+ret_n = prune2(n,EAST);
+if ( ret_n(1).r == 4 && ret_n(1).c == 3 )
+  display('TEST: PASSED: prune2(): E4');
+else
+  display('TEST: FAILED: prune2(): E4');
+end
+%---------------------------------------------
+n.r = 2; n.c = 3;
+ret_n = prune2(n,WEST);
+if ( isempty(ret_n) )
+  display('TEST: PASSED: prune2(): W1');
+else
+  display('TEST: FAILED: prune2(): W1');
+end
+
+n.r = 3; n.c = 3;
+ret_n = prune2(n,WEST);
+if ( ret_n.r == 3 && ret_n.c == 2 )
+  display('TEST: PASSED: prune2(): W2');
+else
+  display('TEST: FAILED: prune2(): W2');
+end
+
+n.r = 1; n.c = 2;
+ret_n = prune2(n,WEST);
+if ( ret_n(1).r == 1 && ret_n(1).c == 1 )
+  display('TEST: PASSED: prune2(): W3');
+else
+  display('TEST: FAILED: prune2(): W3');
+end
+if ( ret_n(2).r == 2 && ret_n(2).c == 1 )
+  display('TEST: PASSED: prune2(): W3');
+else
+  display('TEST: FAILED: prune2(): W3');
+end
+
+n.r = 4; n.c = 2;
+ret_n = prune2(n,WEST);
+if ( ret_n(1).r == 4 && ret_n(1).c == 1 )
+  display('TEST: PASSED: prune2(): W4');
+else
+  display('TEST: FAILED: prune2(): W4');
+end
+%---------------------------------------------
+n.r = 3; n.c = 2;
+ret_n = prune2(n,NORTH);
+if ( isempty(ret_n) )
+  display('TEST: PASSED: prune2(): N1');
+else
+  display('TEST: FAILED: prune2(): N1');
+end
+
+n.r = 3; n.c = 3;
+ret_n = prune2(n,NORTH);
+if ( ret_n.r == 2 && ret_n.c == 3 )
+  display('TEST: PASSED: prune2(): N2');
+else
+  display('TEST: FAILED: prune2(): N2');
+end
+
+n.r = 2; n.c = 3;
+ret_n = prune2(n,NORTH);
+if ( ret_n(1).r == 1 && ret_n(1).c == 3 )
+  display('TEST: PASSED: prune2(): N3');
+else
+  display('TEST: FAILED: prune2(): N3');
+end
+if ( ret_n(2).r == 1 && ret_n(2).c == 2 )
+  display('TEST: PASSED: prune2(): N3');
+else
+  display('TEST: FAILED: prune2(): N3');
+end
+
+n.r = 2; n.c = 4;
+ret_n = prune2(n,NORTH);
+if ( ret_n(1).r == 1 && ret_n(1).c == 4 )
+  display('TEST: PASSED: prune2(): N4');
+else
+  display('TEST: FAILED: prune2(): N4');
+end
+%---------------------------------------------
+n.r = 1; n.c = 2;
+ret_n = prune2(n,SOUTH);
+if ( isempty(ret_n) )
+  display('TEST: PASSED: prune2(): S1');
+else
+  display('TEST: FAILED: prune2(): S1');
+end
+
+n.r = 1; n.c = 3;
+ret_n = prune2(n,SOUTH);
+if ( ret_n.r == 2 && ret_n.c == 3 )
+  display('TEST: PASSED: prune2(): S2');
+else
+  display('TEST: FAILED: prune2(): S2');
+end
+
+n.r = 2; n.c = 1;
+ret_n = prune2(n,SOUTH);
+if ( ret_n(1).r == 3 && ret_n(1).c == 1 )
+  display('TEST: PASSED: prune2(): S3');
+else
+  display('TEST: FAILED: prune2(): S3');
+end
+if ( ret_n(2).r == 3 && ret_n(2).c == 2 )
+  display('TEST: PASSED: prune2(): S3');
+else
+  display('TEST: FAILED: prune2(): S3');
+end
+
+n.r = 2; n.c = 4;
+ret_n = prune2(n,SOUTH);
+if ( ret_n(1).r == 3 && ret_n(1).c == 4 )
+  display('TEST: PASSED: prune2(): S4');
+else
+  display('TEST: FAILED: prune2(): S4');
+end
+
+%---------------------------------------------
+n.r = 2; n.c = 3;
+ret_n = prune2(n,NE);
+if ( is_same_node2(ret_n(1), 1, 3) && ...
+     is_same_node2(ret_n(2), 1, 4) && ...
+     is_same_node2(ret_n(3), 2, 4) && ...
+     is_same_node2(ret_n(4), 1, 2))
+  display('TEST: PASSED: prune2(): NE1');
+else
+  display('TEST: FAILED: prune2(): NE1');
+end
+
+n.r = 1; n.c = 2;
+ret_n = prune2(n,NE);
+if ( is_same_node2(ret_n(1), 1, 3) && ...
+     is_same_node2(ret_n(2), 2, 3))
+  display('TEST: PASSED: prune2(): NE2');
+else
+  display('TEST: FAILED: prune2(): NE2');
+end
