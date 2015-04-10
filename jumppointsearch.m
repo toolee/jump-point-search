@@ -60,6 +60,9 @@ nodes = draw_fgh_value(nodes);
 keep_running = false;
 start_index = rc2indx(START.r,START.c);
 cur_n = nodes(start_index);
+ci = 1;
+close_list(ci) = start_index;
+ci = ci+1;
 dir = CENTER;
 oi = 1;
 
@@ -72,8 +75,10 @@ while not( is_same_node(cur_n,GOAL) )
       scr(i).hldr = plot(scr(i).c + 0.1, scr(i).r + 0.1, 'b*');
       [nodes,indx] = update_f_g_value(scr(i),cur_n, nodes);
       % add to open_list
-      open_list(oi) = indx;
-      oi = oi + 1;
+      if ( size(find(close_list==indx),2) == 0 )
+        open_list(oi) = indx;
+        oi = oi + 1;
+      end
     end
   end
   nodes = draw_fgh_value(nodes);
@@ -86,7 +91,11 @@ while not( is_same_node(cur_n,GOAL) )
   % pop open_list
   oi = oi - 1;
   %pop_index = open_list(oi);
-  
+  if ( size(open_list,2) == 0 )
+    no_path = true;
+    display('No path');
+    return;
+  end
   % find smallest f value
   minv = 999999;
   for i = 1:size(open_list,2)
@@ -105,6 +114,8 @@ while not( is_same_node(cur_n,GOAL) )
     nodes(pop_index).parent_c);
   dir = direction(parent_n, nodes(pop_index));
   cur_n = nodes( pop_index );
+  close_list(ci) = pop_index;
+  ci = ci+1;
 end
 
 % traverse the map
