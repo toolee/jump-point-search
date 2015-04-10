@@ -65,14 +65,16 @@ oi = 1;
 
 while not( is_same_node(cur_n,GOAL) )
   cur_n_hdlr = plot(cur_n.c + 0.2,cur_n.r + 0.2,'r*');
-  scr = identify_successor(cur_n,dir);
-  for i = 1:size(scr,2)
-    %scr(i)
-    scr(i).hldr = plot(scr(i).c + 0.1, scr(i).r + 0.1, 'b*');
-    [nodes,indx] = update_f_g_value(scr(i),cur_n, nodes);
-    % add to open_list
-    open_list(oi) = indx;
-    oi = oi + 1;
+  [scr,cnt] = identify_successor(cur_n,dir);
+  if ( cnt > 0 )
+    for i = 1:size(scr,2)
+      %scr(i)
+      scr(i).hldr = plot(scr(i).c + 0.1, scr(i).r + 0.1, 'b*');
+      [nodes,indx] = update_f_g_value(scr(i),cur_n, nodes);
+      % add to open_list
+      open_list(oi) = indx;
+      oi = oi + 1;
+    end
   end
   nodes = draw_fgh_value(nodes);
   
@@ -134,9 +136,10 @@ end
 % param   : x - current node
 % return  : successors
 %--------------------------------------------------------------------------
-function successors = identify_successor(x,dir)
+function [successors,si] = identify_successor(x,dir)
 global CENTER
-si = 1;
+si = 0;
+successors = [];
 if ( dir == CENTER )
   the_nb = prune(neighbors(x.r,x.c));
 else
@@ -146,10 +149,15 @@ for i = 1:size(the_nb,2)
   the_dir = direction(x,the_nb(i));
   n = jump(x,the_dir);
   if( ~isempty(n) )
-    successors(si) = n;
+    if ( isempty(successors) )
+      clear successors;
+    end
     si = si + 1;
+    successors(si) = n;
   end
 end
+
+
 
 %--------------------------------------------------------------------------
 % function: jump
