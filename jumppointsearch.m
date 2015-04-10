@@ -614,6 +614,13 @@ if ( x.r == y.r && x.c == y.c )
   ret = true;
 end
 
+function ret = is_same_node2(n,r,c)
+ret = false;
+if ( n.r == r && n.c == c )
+  ret = true;
+end
+
+
 %--------------------------------------------------------------------------
 % function: use_canned_map
 % param   :
