@@ -117,16 +117,8 @@ if( is_outside(parent_n) )
 end
 
 while (nodes(ti).r ~= START.r || nodes(ti).c ~= START.c)
-    if( nodes(ti).c > nodes(ti).parent_c )
-        xx = [nodes(ti).parent_c+0.5 nodes(ti).c+0.5];
-    else
-        xx = [nodes(ti).c+0.5 nodes(ti).parent_c+0.5];
-    end
-    if( nodes(ti).r > nodes(ti).parent_r )
-        yy = [nodes(ti).parent_r+0.5 nodes(ti).r+0.5];
-    else
-        yy = [nodes(ti).r+0.5 nodes(ti).parent_r+0.5];
-    end
+    xx = [nodes(ti).c+0.5 nodes(ti).parent_c+0.5];
+    yy = [nodes(ti).r+0.5 nodes(ti).parent_r+0.5];
     plot(xx,yy);
     ti = rc2indx(nodes(ti).parent_r,nodes(ti).parent_c);
     pause(0.5);
