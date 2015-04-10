@@ -101,7 +101,8 @@ while not( is_same_node(cur_n,GOAL) )
   
   
   open_list(sm_i) = [];
-  parent_n = make_node_struct(nodes(pop_index).parent_r,nodes(pop_index).parent_c);
+  parent_n = make_node_struct(nodes(pop_index).parent_r,...
+    nodes(pop_index).parent_c);
   dir = direction(parent_n, nodes(pop_index));
   cur_n = nodes( pop_index );
 end
@@ -677,6 +678,25 @@ small_map3 = ...
         C, C, G;
         ];
 
+      small_map4 = ...
+        [ S, C, C, C;
+          C, C, O, C;
+          O, O, O, C;
+          C, C, C, C;
+          G, C, O, C;
+          C, O, O, C;
+          C, C, C, C;
+        ];
+            small_map5 = ...
+        [ S, C, C, C;
+          C, C, C, C;
+          C, C, C, C;
+          C, C, C, C;
+          C, C, C, C;
+          C, C, C, C;
+          C, C, G, C;
+        ];
+      
 large_map = ...
       [ C, C, C, C, C, C, C, C, C, C;
         C, O, O, C, O, C, C, C, C, C;
@@ -702,7 +722,7 @@ no_path_large_map = ...
         C, C, C, C, C, C, C, C, C, C;
         G, C, C, C, C, C, C, C, C, C;
         ];
-ret = small_map;
+ret = small_map5;
 
 % override to use unit_test_map
 if ( unit_test )
