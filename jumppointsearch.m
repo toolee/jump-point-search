@@ -66,6 +66,7 @@ ci = ci+1;
 dir = CENTER;
 oi = 1;
 
+open_list = [];
 while not( is_same_node(cur_n,GOAL) )
   cur_n_hdlr = plot(cur_n.c + 0.2,cur_n.r + 0.2,'r*');
   [scr,cnt] = identify_successor(cur_n,dir);
@@ -196,7 +197,9 @@ if ( is_same_node(n,GOAL) )
   return; 
 end
 
-if ( is_forced_neighbor_exist(n,dir) )
+%if ( is_forced_neighbor_exist(n,dir) )
+[ignore,has_forced] = prune2(n,dir);
+if ( has_forced )
   ret_n = n;
   return;
 end
@@ -424,7 +427,7 @@ end
 
 ret_n = nn;
 
-function ret_n = prune2(n,dir)
+function [ret_n,has_forced] = prune2(n,dir)
 global map; global ROW; global COL; global S; global G; global C; global O;
 global START; global GOAL;
 
@@ -448,6 +451,7 @@ n9 = make_node_struct( n.r+1, n.c+1 );
 
 ret_n = struct('r',[],'c',[]);
 i = 1;
+has_forced = false;
 %----------------------------
 if ( dir == EAST )
   % hit obstacle
@@ -460,12 +464,16 @@ if ( dir == EAST )
   ret_n(i) = n6; i = i+1;
   
   % if n2 is an obstacle, then n3 is a forced neighbor
-  if ( is_inside(n2) && is_obstacle(n2) )
+  if ( is_inside(n2) && is_obstacle(n2) && ...
+      is_inside(n3) && is_not_obstacle(n3) )
+    has_forced = true;
     ret_n(i) = n3;
     i = i+1;
   end
   
-  if ( is_inside(n8) && is_obstacle(n8) )
+  if ( is_inside(n8) && is_obstacle(n8) && ...
+      is_inside(n9) && is_not_obstacle(n9) )
+    has_forced = true;
     ret_n(i) = n9;
     i = i+1;
   end
@@ -483,13 +491,17 @@ if ( dir == WEST )
   ret_n(i) = n4; i = i+1;
   
   % if n2 is an obstacle, then n1 is a forced neighbor
-  if ( is_inside(n2) && is_obstacle(n2) )
+  if ( is_inside(n2) && is_obstacle(n2) && ...
+      is_inside(n1) && is_not_obstacle(n1))
+    has_forced = true;
     ret_n(i) = n1;
     i = i+1;
   end
   
   % if n8 is an obstacle, then n7 is a forced neighbor
-  if ( is_inside(n8) && is_obstacle(n8) )
+  if ( is_inside(n8) && is_obstacle(n8) && ...
+      is_inside(n7) && is_not_obstacle(n7))
+    has_forced = true;
     ret_n(i) = n7;
     i = i+1;
   end
@@ -506,12 +518,16 @@ if ( dir == NORTH )
   
   ret_n(i) = n2; i = i+1;
 
-  if ( is_inside(n4) && is_obstacle(n4) )
+  if ( is_inside(n4) && is_obstacle(n4) && ...
+      is_inside(n1) && is_not_obstacle(n1))
+    has_forced = true;
     ret_n(i) = n1;
     i = i+1;
   end
 
-  if ( is_inside(n6) && is_obstacle(n6) )
+  if ( is_inside(n6) && is_obstacle(n6) && ...
+      is_inside(n3) && is_not_obstacle(n3))
+    has_forced = true;
     ret_n(i) = n3;
     i = i+1;
   end
@@ -528,12 +544,16 @@ if ( dir == SOUTH )
   
   ret_n(i) = n8; i = i+1;
 
-  if ( is_inside(n4) && is_obstacle(n4) )
+  if ( is_inside(n4) && is_obstacle(n4) && ...
+      is_inside(n7) && is_not_obstacle(n7))
+    has_forced = true;
     ret_n(i) = n7;
     i = i+1;
   end
 
-  if ( is_inside(n6) && is_obstacle(n6) )
+  if ( is_inside(n6) && is_obstacle(n6) && ...
+      is_inside(n9) && is_not_obstacle(n9))
+    has_forced = true;
     ret_n(i) = n9;
     i = i+1;
   end
@@ -551,11 +571,15 @@ if ( dir == NE )
     ret_n(i) = n6; i = i + 1;
   end
   
-  if ( is_inside(n4) && is_obstacle(n4) )
+  if ( is_inside(n4) && is_obstacle(n4) && ...
+      is_inside(n1) && is_not_obstacle(n1))
+    has_forced = true;
     ret_n(i) = n1; i = i + 1;
   end
   
-  if ( is_inside(n8) && is_obstacle(n8) )
+  if ( is_inside(n8) && is_obstacle(n8) && ...
+      is_inside(n9) && is_not_obstacle(n9))
+    has_forced = true;
     ret_n(i) = n9; i = i + 1;
   end
   
@@ -573,11 +597,15 @@ if ( dir == NW )
     ret_n(i) = n4; i = i + 1;
   end
   
-  if ( is_inside(n6) && is_obstacle(n6) )
+  if ( is_inside(n6) && is_obstacle(n6) && ...
+      is_inside(n3) && is_not_obstacle(n3))
+    has_forced = true;
     ret_n(i) = n3; i = i + 1;
   end
   
-  if ( is_inside(n8) && is_obstacle(n8) )
+  if ( is_inside(n8) && is_obstacle(n8) && ...
+      is_inside(n7) && is_not_obstacle(n7))
+    has_forced = true;
     ret_n(i) = n7; i = i + 1;
   end
   
@@ -596,11 +624,15 @@ if ( dir == SW )
     ret_n(i) = n8; i = i + 1;
   end
   
-  if ( is_inside(n2) && is_obstacle(n2) )
+  if ( is_inside(n2) && is_obstacle(n2) && ...
+      is_inside(n1) && is_not_obstacle(n1))
+    has_forced = true;
     ret_n(i) = n1; i = i + 1;
   end
   
-  if ( is_inside(n6) && is_obstacle(n6) )
+  if ( is_inside(n6) && is_obstacle(n6) && ...
+      is_inside(n9) && is_not_obstacle(n9))
+    has_forced = true;
     ret_n(i) = n9; i = i + 1;
   end
   
@@ -619,11 +651,11 @@ if ( dir == SE )
     ret_n(i) = n9; i = i + 1;
   end
   
-  if ( is_inside(n2) && is_obstacle(n2) )
+  if ( is_inside(n2) && is_obstacle(n2) && is_inside(n3) && is_not_obstacle(n3) )
     ret_n(i) = n3; i = i + 1;
   end
   
-  if ( is_inside(n4) && is_obstacle(n4) )
+  if ( is_inside(n4) && is_obstacle(n4) && is_inside(n7) && is_not_obstacle(n7) )
     ret_n(i) = n7; i = i + 1;
   end
   
