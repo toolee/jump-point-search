@@ -147,7 +147,10 @@ global CENTER
 si = 0;
 successors = [];
 if ( dir == CENTER )
-  the_nb = prune(neighbors(x.r,x.c));
+  [the_nb,found] = prune(neighbors(x.r,x.c));
+  if ( ~found )
+    return;
+  end
 else
   the_nb = prune2(x,dir);
 end
@@ -414,19 +417,25 @@ end
 % param   : n all neighbors
 % return  : pruned neighbors (no obstacle)
 %--------------------------------------------------------------------------
-function ret_n = prune(n)
+function [ret_n,found] = prune(n)
 global map; global ROW; global COL; global S; global G; global C; global O;
 
+found = false;
 ii = 1;
 for i = 1:size(n,2)
   if ( map( n(i).r, n(i).c ) ~= O )
     nn(ii).r = n(i).r;
     nn(ii).c = n(i).c;
     ii = ii+1;
+    found = true;
   end
 end
 
-ret_n = nn;
+if ( found )
+  ret_n = nn;
+else
+  ret_n = [];
+end
 
 function [ret_n,has_forced] = prune2(n,dir)
 global map; global ROW; global COL; global S; global G; global C; global O;
