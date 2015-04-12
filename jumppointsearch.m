@@ -74,9 +74,10 @@ while not( is_same_node(cur_n,GOAL) )
     for i = 1:size(scr,2)
       %scr(i)
       scr(i).hldr = plot(scr(i).c + 0.1, scr(i).r + 0.1, 'b*');
-      [nodes,indx] = update_f_g_value(scr(i),cur_n, nodes);
+      indx = rc2indx(scr(i).r,scr(i).c);
       % add to open_list
       if ( size(find(close_list==indx),2) == 0 )
+        [nodes,indx] = update_f_g_value(scr(i),cur_n, nodes);
         open_list(oi) = indx;
         oi = oi + 1;
       end
