@@ -679,11 +679,16 @@ if ( dir == SE )
     ret_n(i) = n9; i = i + 1;
   end
   
-  if ( is_inside(n2) && is_obstacle(n2) && is_inside(n3) && is_not_obstacle(n3) )
+  % test for forced neighbor
+  if ( is_inside(n2) && is_obstacle(n2) && ...
+      is_inside(n3) && is_not_obstacle(n3) )
+     has_forced = true;
     ret_n(i) = n3; i = i + 1;
   end
   
-  if ( is_inside(n4) && is_obstacle(n4) && is_inside(n7) && is_not_obstacle(n7) )
+  if ( is_inside(n4) && is_obstacle(n4) && ...
+      is_inside(n7) && is_not_obstacle(n7) )
+    has_forced = true;
     ret_n(i) = n7; i = i + 1;
   end
   
