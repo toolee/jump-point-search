@@ -571,16 +571,20 @@ if ( dir == SOUTH )
 end
 %----------------------------
 if ( dir == NE )
+  status1 = false; status2 = false;
   if ( is_inside(n2) && is_not_obstacle(n2) )
     ret_n(i) = n2; i = i + 1;
-  end
-  if ( is_inside(n3) && is_not_obstacle(n3) )
-    ret_n(i) = n3; i = i + 1;
+    status1 = true;
   end
   if ( is_inside(n6) && is_not_obstacle(n6) )
     ret_n(i) = n6; i = i + 1;
+    status2 = true;
+  end
+  if ( is_inside(n3) && is_not_obstacle(n3) )%&& status1 && status2)
+    ret_n(i) = n3; i = i + 1;
   end
   
+  % test for forced neighbor
   if ( is_inside(n4) && is_obstacle(n4) && ...
       is_inside(n1) && is_not_obstacle(n1))
     has_forced = true;
@@ -597,16 +601,21 @@ if ( dir == NE )
 end
 %----------------------------
 if ( dir == NW )
-  if ( is_inside(n1) && is_not_obstacle(n1) )
-    ret_n(i) = n1; i = i + 1;
-  end
+  status1 = false;
+  status2 = false;
   if ( is_inside(n2) && is_not_obstacle(n2) )
     ret_n(i) = n2; i = i + 1;
+    status1 = true;
   end
   if ( is_inside(n4) && is_not_obstacle(n4) )
     ret_n(i) = n4; i = i + 1;
+    status2 = true;
   end
-  
+  if ( is_inside(n1) && is_not_obstacle(n1) )%&& status1 && status2 )
+    ret_n(i) = n1; i = i + 1;
+  end
+    
+  % test for forced neighbor
   if ( is_inside(n6) && is_obstacle(n6) && ...
       is_inside(n3) && is_not_obstacle(n3))
     has_forced = true;
@@ -624,16 +633,21 @@ end
 
 %----------------------------
 if ( dir == SW )
+  status1 = false;
+  status2 = false;
   if ( is_inside(n4) && is_not_obstacle(n4) )
     ret_n(i) = n4; i = i + 1;
-  end
-  if ( is_inside(n7) && is_not_obstacle(n7) )
-    ret_n(i) = n7; i = i + 1;
+    status1 = true;
   end
   if ( is_inside(n8) && is_not_obstacle(n8) )
     ret_n(i) = n8; i = i + 1;
+    status2 = true;
   end
-  
+  if ( is_inside(n7) && is_not_obstacle(n7) )% && status1 && status2)
+    ret_n(i) = n7; i = i + 1;
+  end
+
+  % test for forced neighbor
   if ( is_inside(n2) && is_obstacle(n2) && ...
       is_inside(n1) && is_not_obstacle(n1))
     has_forced = true;
@@ -651,13 +665,17 @@ end
 
 %----------------------------
 if ( dir == SE )
+  status1 = false;
+  status2 = false;
   if ( is_inside(n6) && is_not_obstacle(n6) )
     ret_n(i) = n6; i = i + 1;
+    status1 = true;
   end
   if ( is_inside(n8) && is_not_obstacle(n8) )
     ret_n(i) = n8; i = i + 1;
+    status2 = true;
   end
-  if ( is_inside(n9) && is_not_obstacle(n9) )
+  if ( is_inside(n9) && is_not_obstacle(n9) )%&& status1 && status2 )
     ret_n(i) = n9; i = i + 1;
   end
   
