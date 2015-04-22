@@ -2,6 +2,9 @@ function astar(input_map)
 %clc; clear all; close all;
 dbstop if error;
 
+global do_plot; do_plot = 0;
+H = figure;
+
 global VISIT_ALL_NODES; VISIT_ALL_NODES = 0;
 display(sprintf('INFO: visit all nodes %d',VISIT_ALL_NODES));
 global G_COST;          G_COST = 1;
@@ -107,7 +110,7 @@ end
 % astar
 %--------------------------------------------------------------------------
 function astar_execute(map)
-global VISIT_ALL_NODES;
+global VISIT_ALL_NODES; global do_plot
 
 [S,G,O,C] = map_constants;
 [ROW,COL] = size(map);
@@ -124,12 +127,16 @@ set(gca,'xaxislocation','top','ydir','reverse');
 %set(gca,'xdir','right');
 
 % plot start, goal, obstacles
+if(do_plot)
 plot(start_c+0.5,start_r+0.5,'ro');
 plot(goal_c+0.5,goal_r+0.5,'go');
+end
 for ri = 1:ROW
     for ci = 1:COL
         if(map(ri,ci)==O) % if it is a obstacle draw it
+          if(do_plot)
             plot(ci+0.5,ri+0.5,'kx');
+          end
         end
     end
 end
@@ -144,7 +151,9 @@ nodes = draw_fgh_value(map,nodes);
 % empty open list
 ci=1;  % current slot in close_list
 close_list(ci) = rc2indx(ROW,COL,start_r,start_c);  % <---- this is current position
+if(do_plot)
 current_hldr = plot(start_c+0.1,start_r+0.1,'r*');
+end
 oi=1;  % current open slot in open_list
 open_list=[];
 
@@ -212,12 +221,16 @@ for i = 1:size(open_list,2)
 end
 
 % pop open list, push close list
+if(do_plot)
 delete(current_hldr);
+end
 text(nodes(close_list(ci)).c+0.01,nodes(close_list(ci)).r+0.1,'/');
 if( ~isempty(open_list) )
   ci = ci + 1;
   close_list(ci) = open_list(sm_i);
+  if(do_plot)
   current_hldr = plot(nodes(close_list(ci)).c+0.01,nodes(close_list(ci)).r+0.1,'r*');
+  end
   open_list(sm_i) = [];
 else
   keep_running = false;
@@ -232,13 +245,17 @@ end
 if( VISIT_ALL_NODES && keep_running )
     if( ci > ROW*COL - 1 - size(find(map == O),1) )
         keep_running = false;
+        if(do_plot)
         delete(current_hldr);
+        end
         text(nodes(close_list(ci)).c+0.01,nodes(close_list(ci)).r+0.1,'/');
     end
 else
     if ( map(nodes(close_list(ci)).r,nodes(close_list(ci)).c) == G )
         keep_running = false;
+        if(do_plot)
         delete(current_hldr);
+        end
         text(nodes(close_list(ci)).c+0.01,nodes(close_list(ci)).r+0.1,'/');
     end
 end
@@ -264,7 +281,9 @@ while (nodes(ti).r ~= start_r || nodes(ti).c ~= start_c)
     else
         yy = [nodes(ti).r+0.5 nodes(ti).parent_r+0.5];
     end
+    if(do_plot)
     plot(xx,yy);
+    end
     ti = rc2indx(ROW,COL,nodes(ti).parent_r,nodes(ti).parent_c);
 %     pause(0.5);
 end

@@ -1,8 +1,12 @@
 function jumppointsearch(input_map)
-clc; clear all; close all;
+%clc; clear all; close all;
+dbstop if error;
 % This will only run unit test then exit
-unit_test = true;
+unit_test = false;
 
+global do_plot; do_plot = 0;
+
+global H; H = figure;
 
 global map; global ROW; global COL; global S; global G; global C; global O;
 global START; global GOAL;
@@ -55,7 +59,7 @@ end
 % compute h values for all nodes, create nodes for the first time
 nodes = astar_compute_h;
 
-nodes = draw_fgh_value(nodes);
+%nodes = draw_fgh_value(nodes);
 
 keep_running = false;
 start_index = rc2indx(START.r,START.c);
@@ -65,15 +69,19 @@ close_list(ci) = start_index;
 ci = ci+1;
 dir = CENTER;
 oi = 1;
-
 open_list = [];
 while not( is_same_node(cur_n,GOAL) )
-  cur_n_hdlr = plot(cur_n.c + 0.2,cur_n.r + 0.2,'r*');
+  iii = rc2indx(cur_n.r,cur_n.c);
+  if(do_plot)
+    cur_n_hdlr = plot(cur_n.c + 0.2,cur_n.r + 0.2,'r*');
+  end
   [scr,cnt] = identify_successor(cur_n,dir);
   if ( cnt > 0 )
     for i = 1:size(scr,2)
       %scr(i)
+        if(do_plot)
       scr(i).hldr = plot(scr(i).c + 0.1, scr(i).r + 0.1, 'b*');
+        end
       indx = rc2indx(scr(i).r,scr(i).c);
       % add to open_list
       if ( size(find(close_list==indx),2) == 0 )
@@ -83,11 +91,13 @@ while not( is_same_node(cur_n,GOAL) )
       end
     end
   end
-  nodes = draw_fgh_value(nodes);
+  %nodes = draw_fgh_value(nodes);
   
+  if(do_plot)
   delete (cur_n_hdlr);
   for i = 1:size(scr,2)
     delete(scr(i).hldr);
+  end
   end
   
   % pop open_list
@@ -132,9 +142,11 @@ end
 while (nodes(ti).r ~= START.r || nodes(ti).c ~= START.c)
     xx = [nodes(ti).c+0.5 nodes(ti).parent_c+0.5];
     yy = [nodes(ti).r+0.5 nodes(ti).parent_r+0.5];
+    if(do_plot)
     plot(xx,yy);
+    end
     ti = rc2indx(nodes(ti).parent_r,nodes(ti).parent_c);
-    pause(0.5);
+    %pause(0.05);
 end
 
 %--------------------------------------------------------------------------
@@ -332,7 +344,7 @@ end
 nodes(index).f = nodes(index).g + nodes(index).h;
 nodes(index).parent_r = cur_n.r;
 nodes(index).parent_c = cur_n.c;
-nodes(index)
+nodes(index);
 
 %--------------------------------------------------------------------------
 % function: distance
@@ -752,8 +764,6 @@ small_map3 = ...
           O, O, O, C;
           C, C, C, C;
           G, C, O, C;
-          C, O, O, C;
-          C, C, C, C;
         ];
             small_map5 = ...
         [ S, C, C, C;
@@ -766,16 +776,16 @@ small_map3 = ...
         ];
       
 large_map = ...
-      [ C, C, C, C, C, C, C, C, C, C;
-        C, O, O, C, O, C, C, C, C, C;
+      [ C, O, C, C, O, C, C, C, C, O;
+        C, O, O, C, O, C, C, C, O, C;
         C, S, O, C, O, C, C, C, C, C;
-        C, O, O, C, O, C, O, C, C, C;
-        C, C, C, C, C, C, O, C, O, C;
+        C, O, O, O, O, C, O, C, C, C;
+        C, C, C, C, C, C, O, O, O, C;
         O, O, O, O, O, O, C, C, O, C;
         C, C, C, C, C, C, C, C, O, C;
         C, O, O, C, O, O, O, C, O, C;
-        C, C, C, C, C, C, O, C, C, C;
-        G, C, C, C, C, C, O, C, C, C;
+        C, C, O, C, C, C, O, C, C, C;
+        G, C, O, C, C, C, O, C, C, C;
         ];
       
 no_path_large_map = ...
@@ -790,7 +800,7 @@ no_path_large_map = ...
         C, C, C, C, C, C, C, C, C, C;
         G, C, C, C, C, C, C, C, C, C;
         ];
-ret = small_map5;
+ret = large_map;
 
 % override to use unit_test_map
 if ( unit_test )
@@ -879,7 +889,7 @@ function n = make_node_struct(r,c)
 %--------------------------------------------------------------------------
 function draw_map()
 global map; global ROW; global COL; global S; global G; global C; global O;
-global START; global GOAL;
+global START; global GOAL; global do_plot;
 axis([1 COL+1 1 ROW+1]);
 grid on;
 hold on;
@@ -888,12 +898,16 @@ set(gca,'YTick',[1:1:ROW]);
 set(gca,'xaxislocation','top','ydir','reverse');
 
 % plot start, goal, obstacles
+if(do_plot)
 plot(START.c+0.5, START.r+0.5, 'ro');
 plot(GOAL.c+0.5, GOAL.r+0.5, 'go');
+end
 for ri = 1:ROW
   for ci = 1:COL
     if( map(ri,ci) == O ) % if it is a obstacle draw it
+      if(do_plot)
       plot(ci+0.5, ri+0.5, 'kx');
+      end
     end
   end
 end
@@ -1085,14 +1099,14 @@ for ni = 1:size(nodes,2)
         if( nodes(ni).h_hldr == 0 )
             nodes(ni).h_hldr = text(nodes(ni).c+0.8,nodes(ni).r+0.1,s);
         else
-            set(nodes(ni).h_hldr,'String',s);
+            set(nodes(ni).h_hldr,'String',s,'FontSize',4);
         end
         if( nodes(ni).g ~= INIT_G_VALUE )
             s = sprintf('%0.2f',nodes(ni).g);
             if( nodes(ni).g_hldr == 0 )
                 nodes(ni).g_hldr = text(nodes(ni).c+0.45,nodes(ni).r+0.1,s);
             else
-                set(nodes(ni).g_hldr,'String',s);
+                set(nodes(ni).g_hldr,'String',s,'FontSize',4);
             end
         end
         if( nodes(ni).f ~= INIT_F_VALUE )
@@ -1100,7 +1114,7 @@ for ni = 1:size(nodes,2)
             if( nodes(ni).f_hldr == 0 )
                 nodes(ni).f_hldr = text(nodes(ni).c+0.1,nodes(ni).r+0.1,s);
             else
-                set(nodes(ni).f_hldr,'String',s);
+                set(nodes(ni).f_hldr,'String',s,'FontSize',4);
             end
         end
         %----------------------------
@@ -1125,7 +1139,7 @@ for ni = 1:size(nodes,2)
             if( nodes(ni).arrow_hldr == 0 )
               nodes(ni).arrow_hldr = text(nodes(ni).c+0.05,nodes(ni).r+0.1,s);
             else
-              set(nodes(ni).arrow_hldr,'String',s);
+              set(nodes(ni).arrow_hldr,'String',s,'FontSize',4);
             end
           end
         end
