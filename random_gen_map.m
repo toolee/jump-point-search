@@ -1,4 +1,4 @@
-function map = random_gen_map(r,c,percent_obst)
+function [map,dist] = random_gen_map(r,c,percent_obst)
 
 % r = 10;
 % c = 10;
@@ -43,6 +43,8 @@ while( s.r == g.r && s.c == g.c )
 end
 
 map(g.r, g.c) = G;
+
+dist =  sqrt( abs(g.r-s.r)^2 + abs(g.c-s.c)^2 );
 
 for i = 1:r
   for j = 1:c
