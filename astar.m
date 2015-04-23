@@ -1,8 +1,9 @@
-function astar(input_map)
+function [nne] = astar(input_map)
 %clc; clear all; close all;
 dbstop if error;
 
 global do_plot; do_plot = 0;
+global nne; nne = 0;
 H = figure;
 
 global VISIT_ALL_NODES; VISIT_ALL_NODES = 0;
@@ -110,7 +111,7 @@ end
 % astar
 %--------------------------------------------------------------------------
 function astar_execute(map)
-global VISIT_ALL_NODES; global do_plot
+global VISIT_ALL_NODES; global do_plot; global nne;
 
 [S,G,O,C] = map_constants;
 [ROW,COL] = size(map);
@@ -159,8 +160,10 @@ open_list=[];
 
 % for loop start here
 keep_running = true;
+
 while keep_running
 
+  nne = nne + 1;
 
 % find surrounding nodes (max 4), and put them in open list
 [current_r,current_c] = indx2rc(ROW,COL,close_list(ci));
@@ -212,7 +215,6 @@ draw_fgh_value(map,nodes);
 % find smallest f value
 minv = 999999;
 for i = 1:size(open_list,2)
-  open_list(i);
   nodes(open_list(i));
     if( nodes(open_list(i)).f < minv )
         minv = nodes(open_list(i)).f;
@@ -324,6 +326,8 @@ if( size(find(list == value),2) == 0 )
 end
 
 function nodes = draw_fgh_value(map,nodes)
+% global do_plot;
+% if( do_plot )
 [S,G,O,C] = map_constants;
 [ROW,COL] = size(map);
 global INIT_G_VALUE;
@@ -377,6 +381,7 @@ for ni = 1:size(nodes,2)
         end
     end
 end
+% end
 function nodes = astar_compute_h(map)
 [S,G,O,C] = map_constants;
 [ROW,COL] = size(map);
