@@ -1,7 +1,7 @@
 function run
 clear all; close all;
 run_str='-2';
-ITERATIONS = 2;
+ITERATIONS = 15;
 
 map_size(1).r = 10;
 map_size(1).c = 10;
@@ -9,23 +9,26 @@ map_size(1).c = 10;
 map_size(2).r = 15;
 map_size(2).c = 15;
 
-map_size(3).r = 7;
-map_size(3).c = 7;
+map_size(3).r = 20;
+map_size(3).c = 20;
 
-map_size(4).r = 6;
-map_size(4).c = 6;
+map_size(4).r = 25;
+map_size(4).c = 25;
 
-map_size(5).r = 5;
-map_size(5).c = 5;
+map_size(5).r = 30;
+map_size(5).c = 30;
 
 obstacle_percentage = [0.1 0.2 0.3 0.4 0.5 0.6 0.7];
 
 
-for i = 1:size(map_size,2)
+size_of_map = size(map_size,2);
+size_of_op = size(obstacle_percentage,2);
+
+for i = 1:size_of_map
   H = figure; hold on;
   r = map_size(i).r;
   c = map_size(i).c;
-  for j = 1:size(obstacle_percentage,2)
+  for j = 1:size_of_op
     op = obstacle_percentage(j);
     
     data(i,j).op = op;
@@ -81,8 +84,8 @@ for i = 1:size(map_size,2)
   close
 end
 
-for i = 1:size(map_size,2)
-  for j = 1:size(obstacle_percentage,2)
+for i = 1:size_of_map
+  for j = 1:size_of_op
     jps_mean(i,j) = data(i,j).jps_mean;
     jps_std(i,j) = data(i,j).jps_std;
     as_mean(i,j) = data(i,j).as_mean;
@@ -96,34 +99,75 @@ for i = 1:size(map_size,2)
   end
 end
 
+save all;
+
+%%
+% map size 1,ob(1,2,3)    map size 2,ob(1,2,3)
+%color_op = ['bx'; 'gx'; 'rx'; 'cx'; 'mx'; 'kx'; 'ko'];
+color_op = ['k.'; 'ko'; 'kx'; 'k+'; 'ks'; 'kv'; 'kh'];
 x = obstacle_percentage;
 H = figure; hold on;
-for i = 1:size(map_size,2)
-  for j = 1:size(obstacle_percentage,2)
-    errorbar(x,mean_dist(i,j),std_dist(i,j),'rx');
+for i = 1:size_of_map
+  for j = 1:size_of_op
+    errorbar( i + x(j), mean_dist(i,j),std_dist(i,j),color_op(j,:));
   end
 end
 xlabel('Percetage of obstacle in map');
+labels = {'10x10' '15x15' '20x20' '25x25' '30x30'};
+set(gca, 'XTick', 1.35:1:size_of_map+0.35, 'XTickLabel', labels);
 ylabel('Euclidean Distance')
 title_str = sprintf('Dist%dx%d',r,c);
 title(title_str);
+legend('a','b');
 hold off
 saveas(H,[title_str run_str '.jpg'],'jpg');
 close
 
+
+%%
+x = 1:size_of_op;
 H = figure; hold on;
-for i = 1:size(map_size,2)
-  for j = 1:size(obstacle_percentage,2)
-    errorbar(x-0.01,jps_mean_nne(i,j),jps_std_nne(i,j),'rx');
-    errorbar(x+0.01,as_mean_nne(i,j),as_std_nne(i,j),'b.');
-  end
-end
-xlabel('Percetage of obstacle in map');
+bar(x,mean(jps_mean_nne),0.2,'r');
+bar(x+0.25,mean(as_mean_nne),0.2,'b');
+xlabel('Percetage of obstacle in all maps');
+labels = {'0.1' '0.2' '0.3' '0.4' '0.5' '0.6' '0.7'};
+set(gca, 'XTick', 1.25:1:size_of_op+0.25, 'XTickLabel', labels);
 ylabel('Num of Nodes Evaluated')
-title_str = sprintf('Nne%dx%d',r,c);
+title_str = sprintf('Average Number of Nodes Expanded');
 title(title_str);
+legend('jump point search','A*');
 hold off
 saveas(H,[title_str run_str '.jpg'],'jpg');
 close
 
-save all;
+%%
+x = 1:size_of_op;
+H = figure; hold on;
+bar(x,min(jps_mean_nne),0.2,'r');
+bar(x+0.25,min(as_mean_nne),0.2,'b');
+xlabel('Percetage of obstacle in all maps');
+labels = {'0.1' '0.2' '0.3' '0.4' '0.5' '0.6' '0.7'};
+set(gca, 'XTick', 1.25:1:size_of_op+0.25, 'XTickLabel', labels);
+ylabel('Num of Nodes Evaluated')
+title_str = sprintf('Best Case Number of Nodes Expanded');
+title(title_str);
+legend('jump point search','A*');
+hold off
+saveas(H,[title_str run_str '.jpg'],'jpg');
+close
+
+%%
+x = 1:size_of_op;
+H = figure; hold on;
+bar(x,max(jps_mean_nne),0.2,'r');
+bar(x+0.25,max(as_mean_nne),0.2,'b');
+xlabel('Percetage of obstacle in all maps');
+labels = {'0.1' '0.2' '0.3' '0.4' '0.5' '0.6' '0.7'};
+set(gca, 'XTick', 1.25:1:size_of_op+0.25, 'XTickLabel', labels);
+ylabel('Num of Nodes Evaluated')
+title_str = sprintf('Worst Case Number of Nodes Expanded');
+title(title_str);
+legend('jump point search','A*');
+hold off
+saveas(H,[title_str run_str '.jpg'],'jpg');
+close
